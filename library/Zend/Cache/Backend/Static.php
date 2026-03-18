@@ -46,7 +46,7 @@ class Zend_Cache_Backend_Static
      * Static backend options
      * @var array
      */
-    protected $_options = array(
+    protected $_options = [
         'public_dir'           => null,
         'sub_dir'              => 'html',
         'file_extension'       => '.html',
@@ -57,19 +57,19 @@ class Zend_Cache_Backend_Static
         'debug_header'         => false,
         'tag_cache'            => null,
         'disable_caching'      => false
-    );
+    ];
 
     /**
      * Cache for handling tags
      * @var Zend_Cache_Core
      */
-    protected $_tagCache = null;
+    protected $_tagCache;
 
     /**
      * Tagged items
      * @var array
      */
-    protected $_tagged = null;
+    protected $_tagged;
 
     /**
      * Interceptor child method to handle the case where an Inner
@@ -78,9 +78,8 @@ class Zend_Cache_Backend_Static
      *
      * @param  string $name
      * @param  mixed $value
-     * @return Zend_Cache_Backend_Static
      */
-    public function setOption($name, $value)
+    public function setOption($name, $value): self
     {
         if ($name == 'tag_cache') {
             $this->setInnerCache($value);
@@ -156,8 +155,7 @@ class Zend_Cache_Backend_Static
         $pathName = $this->_options['public_dir'] . dirname($id);
         $file     = rtrim($pathName, '/') . '/' . $fileName . $this->_options['file_extension'];
         if (file_exists($file)) {
-            $content = file_get_contents($file);
-            return $content;
+            return file_get_contents($file);
         }
 
         return false;
@@ -167,9 +165,8 @@ class Zend_Cache_Backend_Static
      * Test if a cache is available or not (for the given id)
      *
      * @param  string $id cache id
-     * @return bool
      */
-    public function test($id)
+    public function test($id): bool
     {
         $id = $this->_decodeId($id);
         if (!$this->_verifyPath($id)) {
@@ -212,7 +209,7 @@ class Zend_Cache_Backend_Static
      * @param  int   $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
      * @return boolean true if no problem
      */
-    public function save($data, $id, $tags = array(), $specificLifetime = false)
+    public function save($data, $id, $tags = [], $specificLifetime = false)
     {
         if ($this->_options['disable_caching']) {
             return true;
@@ -256,13 +253,13 @@ class Zend_Cache_Backend_Static
         if ($this->_tagged === null && $tagged = $this->getInnerCache()->load(self::INNER_CACHE_NAME)) {
             $this->_tagged = $tagged;
         } elseif ($this->_tagged === null) {
-            $this->_tagged = array();
+            $this->_tagged = [];
         }
         if (!isset($this->_tagged[$id])) {
-            $this->_tagged[$id] = array();
+            $this->_tagged[$id] = [];
         }
         if (!isset($this->_tagged[$id]['tags'])) {
-            $this->_tagged[$id]['tags'] = array();
+            $this->_tagged[$id]['tags'] = [];
         }
         $this->_tagged[$id]['tags'] = array_unique(array_merge($this->_tagged[$id]['tags'], $tags));
         $this->_tagged[$id]['extension'] = $ext;
@@ -395,7 +392,7 @@ class Zend_Cache_Backend_Static
      * @return boolean true if no problem
      * @throws Zend_Exception
      */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
+    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = [])
     {
         $result = false;
         switch ($mode) {
@@ -501,9 +498,8 @@ class Zend_Cache_Backend_Static
      * Verify path exists and is non-empty
      *
      * @param  string $path
-     * @return bool
      */
-    protected function _verifyPath($path)
+    protected function _verifyPath($path): bool
     {
         $path = realpath($path);
         $base = realpath($this->_options['public_dir']);
@@ -570,9 +566,8 @@ class Zend_Cache_Backend_Static
      * Decode a request URI from the provided ID
      *
      * @param string $id
-     * @return string
      */
-    protected function _decodeId($id)
+    protected function _decodeId($id): string
     {
         return pack('H*', $id);
     }

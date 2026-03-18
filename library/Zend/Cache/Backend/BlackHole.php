@@ -47,7 +47,7 @@ class Zend_Cache_Backend_BlackHole
      * @param  boolean $doNotTestCacheValidity if set to true, the cache validity won't be tested
      * @return string|false cached datas
      */
-    public function load($id, $doNotTestCacheValidity = false)
+    public function load($id, $doNotTestCacheValidity = false): bool
     {
         return false;
     }
@@ -58,7 +58,7 @@ class Zend_Cache_Backend_BlackHole
      * @param  string $id cache id
      * @return mixed false (a cache is not available) or "last modified" timestamp (int) of the available cache record
      */
-    public function test($id)
+    public function test($id): bool
     {
         return false;
     }
@@ -75,7 +75,7 @@ class Zend_Cache_Backend_BlackHole
      * @param  int    $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
      * @return boolean true if no problem
      */
-    public function save($data, $id, $tags = array(), $specificLifetime = false)
+    public function save($data, $id, $tags = [], $specificLifetime = false): bool
     {
         return true;
     }
@@ -86,7 +86,7 @@ class Zend_Cache_Backend_BlackHole
      * @param  string $id cache id
      * @return boolean true if no problem
      */
-    public function remove($id)
+    public function remove($id): bool
     {
         return true;
     }
@@ -108,7 +108,7 @@ class Zend_Cache_Backend_BlackHole
      * @param  tags array $tags array of tags
      * @return boolean true if no problem
      */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
+    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = []): bool
     {
         return true;
     }
@@ -118,9 +118,9 @@ class Zend_Cache_Backend_BlackHole
      *
      * @return array array of stored cache ids (string)
      */
-    public function getIds()
+    public function getIds(): array
     {
-        return array();
+        return [];
     }
 
     /**
@@ -128,9 +128,9 @@ class Zend_Cache_Backend_BlackHole
      *
      * @return array array of stored tags (string)
      */
-    public function getTags()
+    public function getTags(): array
     {
-        return array();
+        return [];
     }
 
     /**
@@ -141,9 +141,9 @@ class Zend_Cache_Backend_BlackHole
      * @param array $tags array of tags
      * @return array array of matching cache ids (string)
      */
-    public function getIdsMatchingTags($tags = array())
+    public function getIdsMatchingTags($tags = []): array
     {
-        return array();
+        return [];
     }
 
     /**
@@ -154,9 +154,9 @@ class Zend_Cache_Backend_BlackHole
      * @param array $tags array of tags
      * @return array array of not matching cache ids (string)
      */
-    public function getIdsNotMatchingTags($tags = array())
+    public function getIdsNotMatchingTags($tags = []): array
     {
-        return array();
+        return [];
     }
 
     /**
@@ -167,9 +167,9 @@ class Zend_Cache_Backend_BlackHole
      * @param  array $tags array of tags
      * @return array array of any matching cache ids (string)
      */
-    public function getIdsMatchingAnyTags($tags = array())
+    public function getIdsMatchingAnyTags($tags = []): array
     {
-        return array();
+        return [];
     }
 
     /**
@@ -178,7 +178,7 @@ class Zend_Cache_Backend_BlackHole
      * @return int integer between 0 and 100
      * @throws Zend_Cache_Exception
      */
-    public function getFillingPercentage()
+    public function getFillingPercentage(): int
     {
         return 0;
     }
@@ -194,7 +194,7 @@ class Zend_Cache_Backend_BlackHole
      * @param  string $id cache id
      * @return array array of metadatas (false if the cache id is not found)
      */
-    public function getMetadatas($id)
+    public function getMetadatas($id): bool
     {
         return false;
     }
@@ -206,7 +206,7 @@ class Zend_Cache_Backend_BlackHole
      * @param  int $extraLifetime
      * @return boolean true if ok
      */
-    public function touch($id, $extraLifetime)
+    public function touch($id, $extraLifetime): bool
     {
         return false;
     }
@@ -225,16 +225,16 @@ class Zend_Cache_Backend_BlackHole
      *
      * @return array associative of with capabilities
      */
-    public function getCapabilities()
+    public function getCapabilities(): array
     {
-        return array(
+        return [
             'automatic_cleaning' => true,
             'tags'               => true,
             'expired_read'       => true,
             'priority'           => true,
             'infinite_lifetime'  => true,
             'get_list'           => true,
-        );
+        ];
     }
 
     /**
