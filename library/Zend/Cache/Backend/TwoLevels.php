@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework
  *
@@ -20,7 +22,6 @@
  * @version    $Id$
  */
 
-
 /**
  * @see Zend_Cache_Backend_ExtendedInterface
  */
@@ -30,7 +31,6 @@
  * @see Zend_Cache_Backend
  */
 #require_once 'Zend/Cache/Backend.php';
-
 
 /**
  * @package    Zend_Cache
@@ -93,7 +93,7 @@ class Zend_Cache_Backend_TwoLevels extends Zend_Cache_Backend implements Zend_Ca
         'slow_backend_autoload' => false,
         'fast_backend_autoload' => false,
         'auto_fill_fast_cache' => true,
-        'auto_refresh_fast_cache' => true
+        'auto_refresh_fast_cache' => true,
     ];
 
     /**
@@ -293,7 +293,7 @@ class Zend_Cache_Backend_TwoLevels extends Zend_Cache_Backend implements Zend_Ca
      */
     public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = [])
     {
-        switch($mode) {
+        switch ($mode) {
             case Zend_Cache::CLEANING_MODE_ALL:
                 $boolFast = $this->_fastBackend->clean(Zend_Cache::CLEANING_MODE_ALL);
                 $boolSlow = $this->_slowBackend->clean(Zend_Cache::CLEANING_MODE_ALL);
@@ -450,7 +450,7 @@ class Zend_Cache_Backend_TwoLevels extends Zend_Cache_Backend implements Zend_Ca
             'expired_read' => $slowBackendCapabilities['expired_read'],
             'priority' => $slowBackendCapabilities['priority'],
             'infinite_lifetime' => $slowBackendCapabilities['infinite_lifetime'],
-            'get_list' => $slowBackendCapabilities['get_list']
+            'get_list' => $slowBackendCapabilities['get_list'],
         ];
     }
 
@@ -472,7 +472,7 @@ class Zend_Cache_Backend_TwoLevels extends Zend_Cache_Backend implements Zend_Ca
             'data' => $data,
             'lifetime' => $lifetime,
             'expire' => time() + $lt,
-            'priority' => $priority
+            'priority' => $priority,
         ]);
     }
 

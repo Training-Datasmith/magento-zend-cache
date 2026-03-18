@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework
  *
@@ -20,12 +22,10 @@
  * @version    $Id$
  */
 
-
 /**
  * @see Zend_Cache_Core
  */
 #require_once 'Zend/Cache/Core.php';
-
 
 /**
  * @package    Zend_Cache
@@ -52,7 +52,7 @@ class Zend_Cache_Frontend_Function extends Zend_Cache_Core
     protected $_specificOptions = [
         'cache_by_default' => true,
         'cached_functions' => [],
-        'non_cached_functions' => []
+        'non_cached_functions' => [],
     ];
 
     /**
@@ -94,7 +94,7 @@ class Zend_Cache_Frontend_Function extends Zend_Cache_Core
         }
 
         $id = $this->_makeId($callback, $parameters);
-        if ( ($rs = $this->load($id)) && isset($rs[0], $rs[1])) {
+        if (($rs = $this->load($id)) && isset($rs[0], $rs[1])) {
             // A cache is available
             $output = $rs[0];
             $return = $rs[1];
@@ -155,7 +155,7 @@ class Zend_Cache_Frontend_Function extends Zend_Cache_Core
                 $lastErr = error_get_last();
                 Zend_Cache::throwException("Can't serialize callback object to generate id: {$lastErr['message']}");
             }
-            $name.= '__' . $tmp;
+            $name .= '__' . $tmp;
         }
 
         // generate a unique id for arguments

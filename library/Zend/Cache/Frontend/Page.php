@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework
  *
@@ -20,12 +22,10 @@
  * @version    $Id$
  */
 
-
 /**
  * @see Zend_Cache_Core
  */
 #require_once 'Zend/Cache/Core.php';
-
 
 /**
  * @package    Zend_Cache
@@ -100,9 +100,9 @@ class Zend_Cache_Frontend_Page extends Zend_Cache_Core
             'cache' => true,
             'specific_lifetime' => false,
             'tags' => [],
-            'priority' => null
+            'priority' => null,
         ],
-        'regexps' => []
+        'regexps' => [],
     ];
 
     /**
@@ -164,7 +164,7 @@ class Zend_Cache_Frontend_Page extends Zend_Cache_Core
         if (!is_array($options)) {
             Zend_Cache::throwException('default_options must be an array !');
         }
-        foreach ($options as $key=>$value) {
+        foreach ($options as $key => $value) {
             if (!is_string($key)) {
                 Zend_Cache::throwException("invalid option [$key] !");
             }
@@ -213,12 +213,12 @@ class Zend_Cache_Frontend_Page extends Zend_Cache_Core
         if (!is_array($regexps)) {
             Zend_Cache::throwException('regexps option must be an array !');
         }
-        foreach ($regexps as $regexp=>$conf) {
+        foreach ($regexps as $regexp => $conf) {
             if (!is_array($conf)) {
                 Zend_Cache::throwException('regexps option must be an array of arrays !');
             }
             $validKeys = array_keys($this->_specificOptions['default_options']);
-            foreach ($conf as $key=>$value) {
+            foreach ($conf as $key => $value) {
                 if (!is_string($key)) {
                     Zend_Cache::throwException("unknown option [$key] !");
                 }
@@ -252,7 +252,7 @@ class Zend_Cache_Frontend_Page extends Zend_Cache_Core
         $this->_activeOptions = $this->_specificOptions['default_options'];
         if ($lastMatchingRegexp !== null) {
             $conf = $this->_specificOptions['regexps'][$lastMatchingRegexp];
-            foreach ($conf as $key=>$value) {
+            foreach ($conf as $key => $value) {
                 $this->_activeOptions[$key] = $value;
             }
         }
@@ -312,7 +312,7 @@ class Zend_Cache_Frontend_Page extends Zend_Cache_Core
         }
         $storedHeaders = [];
         $headersList = headers_list();
-        foreach($this->_specificOptions['memorize_headers'] as $headerName) {
+        foreach ($this->_specificOptions['memorize_headers'] as $headerName) {
             foreach ($headersList as $headerSent) {
                 $tmp = explode(':', $headerSent);
                 $headerSentName = trim(array_shift($tmp));
@@ -324,7 +324,7 @@ class Zend_Cache_Frontend_Page extends Zend_Cache_Core
         }
         $array = [
             'data' => $data,
-            'headers' => $storedHeaders
+            'headers' => $storedHeaders,
         ];
         $this->save($array, null, $this->_activeOptions['tags'], $this->_activeOptions['specific_lifetime'], $this->_activeOptions['priority']);
         return $data;
@@ -339,10 +339,10 @@ class Zend_Cache_Frontend_Page extends Zend_Cache_Core
     {
         $tmp = $_SERVER['REQUEST_URI'];
         $array = explode('?', $tmp, 2);
-          $tmp = $array[0];
+        $tmp = $array[0];
         foreach (['Get', 'Post', 'Session', 'Files', 'Cookie'] as $arrayName) {
             $tmp2 = $this->_makePartialId($arrayName, $this->_activeOptions['cache_with_' . strtolower($arrayName) . '_variables'], $this->_activeOptions['make_id_with_' . strtolower($arrayName) . '_variables']);
-            if ($tmp2===false) {
+            if ($tmp2 === false) {
                 return false;
             }
             $tmp = $tmp . $tmp2;
@@ -361,31 +361,31 @@ class Zend_Cache_Frontend_Page extends Zend_Cache_Core
     protected function _makePartialId($arrayName, $bool1, $bool2)
     {
         switch ($arrayName) {
-        case 'Get':
-            $var = $_GET;
-            break;
-        case 'Post':
-            $var = $_POST;
-            break;
-        case 'Session':
-            if (isset($_SESSION)) {
-                $var = $_SESSION;
-            } else {
-                $var = null;
-            }
-            break;
-        case 'Cookie':
-            if (isset($_COOKIE)) {
-                $var = $_COOKIE;
-            } else {
-                $var = null;
-            }
-            break;
-        case 'Files':
-            $var = $_FILES;
-            break;
-        default:
-            return false;
+            case 'Get':
+                $var = $_GET;
+                break;
+            case 'Post':
+                $var = $_POST;
+                break;
+            case 'Session':
+                if (isset($_SESSION)) {
+                    $var = $_SESSION;
+                } else {
+                    $var = null;
+                }
+                break;
+            case 'Cookie':
+                if (isset($_COOKIE)) {
+                    $var = $_COOKIE;
+                } else {
+                    $var = null;
+                }
+                break;
+            case 'Files':
+                $var = $_FILES;
+                break;
+            default:
+                return false;
         }
         if ($bool1) {
             if ($bool2) {

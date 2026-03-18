@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework
  *
@@ -33,7 +35,6 @@
  */
 interface Zend_Cache_Backend_ExtendedInterface extends Zend_Cache_Backend_Interface
 {
-
     /**
      * Return an array of stored cache ids
      *

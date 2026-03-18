@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework
  *
@@ -20,12 +22,10 @@
  * @version    $Id$
  */
 
-
 /**
  * @see Zend_Cache_Core
  */
 #require_once 'Zend/Cache/Core.php';
-
 
 /**
  * @package    Zend_Cache

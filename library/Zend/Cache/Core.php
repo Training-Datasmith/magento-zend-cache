@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework
  *
@@ -19,7 +21,6 @@
  * @version    $Id$
  */
 
-
 /**
  * @package    Zend_Cache
  * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
@@ -30,8 +31,8 @@ class Zend_Cache_Core
     /**
      * Messages
      */
-    const BACKEND_NOT_SUPPORTS_TAG = 'tags are not supported by the current backend';
-    const BACKEND_NOT_IMPLEMENTS_EXTENDED_IF = 'Current backend doesn\'t implement the Zend_Cache_Backend_ExtendedInterface, so this method is not available';
+    public const BACKEND_NOT_SUPPORTS_TAG = 'tags are not supported by the current backend';
+    public const BACKEND_NOT_IMPLEMENTS_EXTENDED_IF = 'Current backend doesn\'t implement the Zend_Cache_Backend_ExtendedInterface, so this method is not available';
 
     /**
      * Backend Object
@@ -89,7 +90,7 @@ class Zend_Cache_Core
         'lifetime'                  => 3600,
         'logging'                   => false,
         'logger'                    => null,
-        'ignore_user_abort'         => false
+        'ignore_user_abort'         => false,
     ];
 
     /**
@@ -139,8 +140,8 @@ class Zend_Cache_Core
             $options = $options->toArray();
         }
         if (!is_array($options)) {
-            Zend_Cache::throwException("Options passed were not an array"
-            . " or Zend_Config instance.");
+            Zend_Cache::throwException('Options passed were not an array'
+            . ' or Zend_Config instance.');
         }
         foreach ($options as $name => $value) {
             $this->setOption($name, $value);
@@ -168,7 +169,7 @@ class Zend_Cache_Core
      */
     public function setBackend(Zend_Cache_Backend $backendObject)
     {
-        $this->_backend= $backendObject;
+        $this->_backend = $backendObject;
         // some options (listed in $_directivesList) have to be given
         // to the backend too (even if they are not "backend specific")
         $directives = [];
@@ -206,7 +207,7 @@ class Zend_Cache_Core
     public function setOption($name, $value)
     {
         if (!is_string($name)) {
-            Zend_Cache::throwException("Incorrect option name!");
+            Zend_Cache::throwException('Incorrect option name!');
         }
         $name = strtolower($name);
         if (array_key_exists($name, $this->_options)) {
@@ -276,7 +277,7 @@ class Zend_Cache_Core
     {
         $this->_options['lifetime'] = $newLifetime;
         $this->_backend->setDirectives([
-            'lifetime' => $newLifetime
+            'lifetime' => $newLifetime,
         ]);
     }
 
@@ -299,7 +300,7 @@ class Zend_Cache_Core
 
         $this->_log("Zend_Cache_Core: load item '{$id}'", 7);
         $data = $this->_backend->load($id, $doNotTestCacheValidity);
-        if ($data===false) {
+        if ($data === false) {
             // no cache available
             return false;
         }
@@ -357,20 +358,20 @@ class Zend_Cache_Core
             $data = serialize($data);
         } else {
             if (!is_string($data)) {
-                Zend_Cache::throwException("Datas must be string or set automatic_serialization = true");
+                Zend_Cache::throwException('Datas must be string or set automatic_serialization = true');
             }
         }
 
         // automatic cleaning
         if ($this->_options['automatic_cleaning_factor'] > 0) {
             $rand = random_int(1, $this->_options['automatic_cleaning_factor']);
-            if ($rand==1) {
+            if ($rand == 1) {
                 //  new way                 || deprecated way
                 if ($this->_extendedBackend || method_exists($this->_backend, 'isAutomaticCleaningAvailable')) {
-                    $this->_log("Zend_Cache_Core::save(): automatic cleaning running", 7);
+                    $this->_log('Zend_Cache_Core::save(): automatic cleaning running', 7);
                     $this->clean(Zend_Cache::CLEANING_MODE_OLD);
                 } else {
-                    $this->_log("Zend_Cache_Core::save(): automatic cleaning is not available/necessary with current backend", 4);
+                    $this->_log('Zend_Cache_Core::save(): automatic cleaning is not available/necessary with current backend', 4);
                 }
             }
         }
@@ -397,7 +398,7 @@ class Zend_Cache_Core
 
         if ($this->_options['write_control']) {
             $data2 = $this->_backend->load($id, true);
-            if ($data!=$data2) {
+            if ($data != $data2) {
                 $this->_log("Zend_Cache_Core::save(): write control of item '{$id}' failed -> removing it", 4);
                 $this->_backend->remove($id);
                 return false;
@@ -689,7 +690,7 @@ class Zend_Cache_Core
         if (!is_array($tags)) {
             Zend_Cache::throwException('Invalid tags array : must be an array');
         }
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             $this->_validateIdOrTag($tag);
         }
         reset($tags);

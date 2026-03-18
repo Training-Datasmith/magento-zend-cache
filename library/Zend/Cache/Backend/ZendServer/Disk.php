@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework
  *
@@ -20,13 +22,11 @@
  * @version    $Id$
  */
 
-
 /** @see Zend_Cache_Backend_Interface */
 #require_once 'Zend/Cache/Backend/Interface.php';
 
 /** @see Zend_Cache_Backend_ZendServer */
 #require_once 'Zend/Cache/Backend/ZendServer.php';
-
 
 /**
  * @package    Zend_Cache
@@ -60,9 +60,11 @@ class Zend_Cache_Backend_ZendServer_Disk extends Zend_Cache_Backend_ZendServer i
      */
     protected function _store($data, $id, $timeToLive): bool
     {
-        if (zend_disk_cache_store($this->_options['namespace'] . '::' . $id,
-                                  $data,
-                                  $timeToLive) === false) {
+        if (zend_disk_cache_store(
+            $this->_options['namespace'] . '::' . $id,
+            $data,
+            $timeToLive
+        ) === false) {
             $this->_log('Store operation failed.');
             return false;
         }

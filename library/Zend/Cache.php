@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework
  *
@@ -19,7 +21,6 @@
  * @version    $Id$
  */
 
-
 /**
  * @package    Zend_Cache
  * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
@@ -27,7 +28,6 @@
  */
 abstract class Zend_Cache
 {
-
     /**
      * Standard frontends
      *
@@ -69,11 +69,11 @@ abstract class Zend_Cache
     /**
      * Consts for clean() method
      */
-    const CLEANING_MODE_ALL              = 'all';
-    const CLEANING_MODE_OLD              = 'old';
-    const CLEANING_MODE_MATCHING_TAG     = 'matchingTag';
-    const CLEANING_MODE_NOT_MATCHING_TAG = 'notMatchingTag';
-    const CLEANING_MODE_MATCHING_ANY_TAG = 'matchingAnyTag';
+    public const CLEANING_MODE_ALL              = 'all';
+    public const CLEANING_MODE_OLD              = 'old';
+    public const CLEANING_MODE_MATCHING_TAG     = 'matchingTag';
+    public const CLEANING_MODE_NOT_MATCHING_TAG = 'notMatchingTag';
+    public const CLEANING_MODE_MATCHING_ANY_TAG = 'matchingAnyTag';
 
     /**
      * Factory

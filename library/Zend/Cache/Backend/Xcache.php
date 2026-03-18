@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework
  *
@@ -20,7 +22,6 @@
  * @version    $Id$
  */
 
-
 /**
  * @see Zend_Cache_Backend_Interface
  */
@@ -31,7 +32,6 @@
  */
 #require_once 'Zend/Cache/Backend.php';
 
-
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
@@ -40,12 +40,11 @@
  */
 class Zend_Cache_Backend_Xcache extends Zend_Cache_Backend implements Zend_Cache_Backend_Interface
 {
-
     /**
      * Log message
      */
-    const TAGS_UNSUPPORTED_BY_CLEAN_OF_XCACHE_BACKEND = 'Zend_Cache_Backend_Xcache::clean() : tags are unsupported by the Xcache backend';
-    const TAGS_UNSUPPORTED_BY_SAVE_OF_XCACHE_BACKEND =  'Zend_Cache_Backend_Xcache::save() : tags are unsupported by the Xcache backend';
+    public const TAGS_UNSUPPORTED_BY_CLEAN_OF_XCACHE_BACKEND = 'Zend_Cache_Backend_Xcache::clean() : tags are unsupported by the Xcache backend';
+    public const TAGS_UNSUPPORTED_BY_SAVE_OF_XCACHE_BACKEND =  'Zend_Cache_Backend_Xcache::save() : tags are unsupported by the Xcache backend';
 
     /**
      * Available options
@@ -60,7 +59,7 @@ class Zend_Cache_Backend_Xcache extends Zend_Cache_Backend implements Zend_Cache
      */
     protected $_options = [
         'user' => null,
-        'password' => null
+        'password' => null,
     ];
 
     /**
@@ -89,7 +88,7 @@ class Zend_Cache_Backend_Xcache extends Zend_Cache_Backend implements Zend_Cache
     public function load($id, $doNotTestCacheValidity = false)
     {
         if ($doNotTestCacheValidity) {
-            $this->_log("Zend_Cache_Backend_Xcache::load() : \$doNotTestCacheValidity=true is unsupported by the Xcache backend");
+            $this->_log('Zend_Cache_Backend_Xcache::load() : $doNotTestCacheValidity=true is unsupported by the Xcache backend');
         }
         $tmp = xcache_get($id);
         if (is_array($tmp)) {
@@ -183,7 +182,7 @@ class Zend_Cache_Backend_Xcache extends Zend_Cache_Backend implements Zend_Cache
                 }
 
                 $cnt = xcache_count(XC_TYPE_VAR);
-                for ($i=0; $i < $cnt; $i++) {
+                for ($i = 0; $i < $cnt; $i++) {
                     xcache_clear_cache(XC_TYPE_VAR, $i);
                 }
 
@@ -193,7 +192,7 @@ class Zend_Cache_Backend_Xcache extends Zend_Cache_Backend implements Zend_Cache
                 }
                 return true;
             case Zend_Cache::CLEANING_MODE_OLD:
-                $this->_log("Zend_Cache_Backend_Xcache::clean() : CLEANING_MODE_OLD is unsupported by the Xcache backend");
+                $this->_log('Zend_Cache_Backend_Xcache::clean() : CLEANING_MODE_OLD is unsupported by the Xcache backend');
                 break;
             case Zend_Cache::CLEANING_MODE_MATCHING_TAG:
             case Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:

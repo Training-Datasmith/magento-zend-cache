@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework
  *
@@ -20,12 +22,10 @@
  * @version    $Id$
  */
 
-
 /**
  * @see Zend_Cache_Core
  */
 #require_once 'Zend/Cache/Core.php';
-
 
 /**
  * @package    Zend_Cache
@@ -35,7 +35,6 @@
  */
 class Zend_Cache_Frontend_Output extends Zend_Cache_Core
 {
-
     private $_idStack = [];
 
     /**
@@ -61,7 +60,7 @@ class Zend_Cache_Frontend_Output extends Zend_Cache_Core
     {
         $data = $this->load($id, $doNotTestCacheValidity);
         if ($data !== false) {
-            if ( $echoData ) {
+            if ($echoData) {
                 echo($data);
                 return true;
             }
@@ -88,7 +87,7 @@ class Zend_Cache_Frontend_Output extends Zend_Cache_Core
         if ($forcedDatas === null) {
             $data = ob_get_clean();
         } else {
-            $data =& $forcedDatas;
+            $data = & $forcedDatas;
         }
         $id = array_pop($this->_idStack);
         if ($id === null) {

@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework
  *
@@ -19,7 +21,6 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
 
 /**
  * @package    Zend_Cache
@@ -44,7 +45,7 @@ class Zend_Cache_Backend
     protected $_directives = [
         'lifetime' => 3600,
         'logging'  => false,
-        'logger'   => null
+        'logger'   => null,
     ];
 
     /**
@@ -75,7 +76,9 @@ class Zend_Cache_Backend
      */
     public function setDirectives($directives)
     {
-        if (!is_array($directives)) Zend_Cache::throwException('Directives parameter must be an array');
+        if (!is_array($directives)) {
+            Zend_Cache::throwException('Directives parameter must be an array');
+        }
         foreach ($directives as $name => $value) {
             if (!is_string($name)) {
                 Zend_Cache::throwException("Incorrect option name : $name");
@@ -198,7 +201,7 @@ class Zend_Cache_Backend
             }
         }
         // Attemp to detect by creating a temporary file
-        $tempFile = tempnam(md5(uniqid(random_int(0, mt_getrandmax()), TRUE)), '');
+        $tempFile = tempnam(md5(uniqid(random_int(0, mt_getrandmax()), true)), '');
         if ($tempFile) {
             $dir = realpath(dirname($tempFile));
             unlink($tempFile);

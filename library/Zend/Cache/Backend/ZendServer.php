@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework
  *
@@ -20,13 +22,11 @@
  * @version    $Id$
  */
 
-
 /** @see Zend_Cache_Backend_Interface */
 #require_once 'Zend/Cache/Backend/Interface.php';
 
 /** @see Zend_Cache_Backend */
 #require_once 'Zend/Cache/Backend.php';
-
 
 /**
  * @package    Zend_Cache
@@ -45,7 +45,7 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
      * @var array available options
      */
     protected $_options = [
-        'namespace' => 'zendframework'
+        'namespace' => 'zendframework',
     ];
 
     /**
@@ -106,7 +106,7 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
         $tmp = $this->_fetch('internal-metadatas---' . $id);
         if ($tmp !== false) {
             if (!is_array($tmp) || !isset($tmp['mtime'])) {
-                Zend_Cache::throwException('Cache metadata for \'' . $id . '\' id is corrupted' );
+                Zend_Cache::throwException('Cache metadata for \'' . $id . '\' id is corrupted');
             }
             return $tmp['mtime'];
         }
@@ -190,7 +190,7 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
                 $this->_clear();
                 return true;
             case Zend_Cache::CLEANING_MODE_OLD:
-                $this->_log("Zend_Cache_Backend_ZendServer::clean() : CLEANING_MODE_OLD is unsupported by the Zend Server backends.");
+                $this->_log('Zend_Cache_Backend_ZendServer::clean() : CLEANING_MODE_OLD is unsupported by the Zend Server backends.');
                 break;
             case Zend_Cache::CLEANING_MODE_MATCHING_TAG:
             case Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:

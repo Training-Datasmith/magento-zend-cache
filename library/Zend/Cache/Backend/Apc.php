@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework
  *
@@ -20,7 +22,6 @@
  * @version    $Id$
  */
 
-
 /**
  * @see Zend_Cache_Backend_Interface
  */
@@ -30,7 +31,6 @@
  * @see Zend_Cache_Backend
  */
 #require_once 'Zend/Cache/Backend.php';
-
 
 /**
  * @package    Zend_Cache
@@ -43,8 +43,8 @@ class Zend_Cache_Backend_Apc extends Zend_Cache_Backend implements Zend_Cache_Ba
     /**
      * Log message
      */
-    const TAGS_UNSUPPORTED_BY_CLEAN_OF_APC_BACKEND = 'Zend_Cache_Backend_Apc::clean() : tags are unsupported by the Apc backend';
-    const TAGS_UNSUPPORTED_BY_SAVE_OF_APC_BACKEND =  'Zend_Cache_Backend_Apc::save() : tags are unsupported by the Apc backend';
+    public const TAGS_UNSUPPORTED_BY_CLEAN_OF_APC_BACKEND = 'Zend_Cache_Backend_Apc::clean() : tags are unsupported by the Apc backend';
+    public const TAGS_UNSUPPORTED_BY_SAVE_OF_APC_BACKEND =  'Zend_Cache_Backend_Apc::save() : tags are unsupported by the Apc backend';
 
     /**
      * Constructor
@@ -147,7 +147,7 @@ class Zend_Cache_Backend_Apc extends Zend_Cache_Backend implements Zend_Cache_Ba
             case Zend_Cache::CLEANING_MODE_ALL:
                 return apc_clear_cache('user');
             case Zend_Cache::CLEANING_MODE_OLD:
-                $this->_log("Zend_Cache_Backend_Apc::clean() : CLEANING_MODE_OLD is unsupported by the Apc backend");
+                $this->_log('Zend_Cache_Backend_Apc::clean() : CLEANING_MODE_OLD is unsupported by the Apc backend');
                 break;
             case Zend_Cache::CLEANING_MODE_MATCHING_TAG:
             case Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
@@ -182,7 +182,7 @@ class Zend_Cache_Backend_Apc extends Zend_Cache_Backend implements Zend_Cache_Ba
     {
         $mem = apc_sma_info(true);
         $memSize    = $mem['num_seg'] * $mem['seg_size'];
-        $memAvailable= $mem['avail_mem'];
+        $memAvailable = $mem['avail_mem'];
         $memUsed = $memSize - $memAvailable;
         if ($memSize == 0) {
             Zend_Cache::throwException('can\'t get apc memory size');
@@ -288,7 +288,7 @@ class Zend_Cache_Backend_Apc extends Zend_Cache_Backend implements Zend_Cache_Ba
             return [
                 'expire' => $mtime + $lifetime,
                 'tags' => [],
-                'mtime' => $mtime
+                'mtime' => $mtime,
             ];
         }
         return false;
@@ -314,7 +314,7 @@ class Zend_Cache_Backend_Apc extends Zend_Cache_Backend implements Zend_Cache_Ba
             }
             $lifetime = $tmp[2];
             $newLifetime = $lifetime - (time() - $mtime) + $extraLifetime;
-            if ($newLifetime <=0) {
+            if ($newLifetime <= 0) {
                 return false;
             }
             apc_store($id, [$data, time(), $newLifetime], $newLifetime);
@@ -345,7 +345,7 @@ class Zend_Cache_Backend_Apc extends Zend_Cache_Backend implements Zend_Cache_Ba
             'expired_read' => false,
             'priority' => false,
             'infinite_lifetime' => false,
-            'get_list' => true
+            'get_list' => true,
         ];
     }
 
