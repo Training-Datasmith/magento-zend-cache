@@ -306,7 +306,7 @@ class Zend_Cache_Core
         }
         if ((!$doNotUnserialize) && $this->_options['automatic_serialization']) {
             // we need to unserialize before sending the result
-            return unserialize($data);
+            return unserialize($data, ['allowed_classes' => false]);
         }
         return $data;
     }
