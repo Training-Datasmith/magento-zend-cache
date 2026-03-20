@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
 /**
  * Zend Framework
  *
@@ -21,7 +21,6 @@ declare(strict_types=1);
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
@@ -35,8 +34,7 @@ interface Zend_Cache_Backend_Interface
      *
      * @param array $directives assoc of directives
      */
-    public function setDirectives($directives);
-
+    public function set_directives($directives);
     /**
      * Test if a cache is available for the given id and (if yes) return it (false else)
      *
@@ -46,8 +44,7 @@ interface Zend_Cache_Backend_Interface
      * @param  boolean $doNotTestCacheValidity If set to true, the cache validity won't be tested
      * @return string|false cached datas
      */
-    public function load($id, $doNotTestCacheValidity = false);
-
+    public function load($id, $do_not_test_cache_validity = false);
     /**
      * Test if a cache is available or not (for the given id)
      *
@@ -55,7 +52,6 @@ interface Zend_Cache_Backend_Interface
      * @return mixed|false (a cache is not available) or "last modified" timestamp (int) of the available cache record
      */
     public function test($id);
-
     /**
      * Save some string datas into a cache record
      *
@@ -68,8 +64,7 @@ interface Zend_Cache_Backend_Interface
      * @param  int   $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
      * @return boolean true if no problem
      */
-    public function save($data, $id, $tags = [], $specificLifetime = false);
-
+    public function save($data, $id, $tags = [], $specific_lifetime = false);
     /**
      * Remove a cache record
      *
@@ -77,7 +72,6 @@ interface Zend_Cache_Backend_Interface
      * @return boolean True if no problem
      */
     public function remove($id);
-
     /**
      * Clean some cache records
      *
@@ -96,5 +90,4 @@ interface Zend_Cache_Backend_Interface
      * @return boolean true if no problem
      */
     public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = []);
-
 }

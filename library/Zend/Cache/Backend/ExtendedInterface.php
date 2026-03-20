@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
 /**
  * Zend Framework
  *
@@ -21,34 +21,30 @@ declare(strict_types=1);
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
 /**
  * @see Zend_Cache_Backend_Interface
  */
 #require_once 'Zend/Cache/Backend/Interface.php';
-
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
  * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-interface Zend_Cache_Backend_ExtendedInterface extends Zend_Cache_Backend_Interface
+interface Zend_cache_backend_extended_Interface extends Zend_Cache_Backend_Interface
 {
     /**
      * Return an array of stored cache ids
      *
      * @return array array of stored cache ids (string)
      */
-    public function getIds();
-
+    public function get_ids();
     /**
      * Return an array of stored tags
      *
      * @return array array of stored tags (string)
      */
-    public function getTags();
-
+    public function get_tags();
     /**
      * Return an array of stored cache ids which match given tags
      *
@@ -57,8 +53,7 @@ interface Zend_Cache_Backend_ExtendedInterface extends Zend_Cache_Backend_Interf
      * @param array $tags array of tags
      * @return array array of matching cache ids (string)
      */
-    public function getIdsMatchingTags($tags = []);
-
+    public function get_ids_matching_tags($tags = []);
     /**
      * Return an array of stored cache ids which don't match given tags
      *
@@ -67,8 +62,7 @@ interface Zend_Cache_Backend_ExtendedInterface extends Zend_Cache_Backend_Interf
      * @param array $tags array of tags
      * @return array array of not matching cache ids (string)
      */
-    public function getIdsNotMatchingTags($tags = []);
-
+    public function get_ids_not_matching_tags($tags = []);
     /**
      * Return an array of stored cache ids which match any given tags
      *
@@ -77,15 +71,13 @@ interface Zend_Cache_Backend_ExtendedInterface extends Zend_Cache_Backend_Interf
      * @param array $tags array of tags
      * @return array array of any matching cache ids (string)
      */
-    public function getIdsMatchingAnyTags($tags = []);
-
+    public function get_ids_matching_any_tags($tags = []);
     /**
      * Return the filling percentage of the backend storage
      *
      * @return int integer between 0 and 100
      */
-    public function getFillingPercentage();
-
+    public function get_filling_percentage();
     /**
      * Return an array of metadatas for the given cache id
      *
@@ -97,8 +89,7 @@ interface Zend_Cache_Backend_ExtendedInterface extends Zend_Cache_Backend_Interf
      * @param string $id cache id
      * @return array array of metadatas (false if the cache id is not found)
      */
-    public function getMetadatas($id);
-
+    public function get_metadatas($id);
     /**
      * Give (if possible) an extra lifetime to the given cache id
      *
@@ -106,8 +97,7 @@ interface Zend_Cache_Backend_ExtendedInterface extends Zend_Cache_Backend_Interf
      * @param int $extraLifetime
      * @return boolean true if ok
      */
-    public function touch($id, $extraLifetime);
-
+    public function touch($id, $extra_lifetime);
     /**
      * Return an associative array of capabilities (booleans) of the backend
      *
@@ -122,6 +112,5 @@ interface Zend_Cache_Backend_ExtendedInterface extends Zend_Cache_Backend_Interf
      *
      * @return array associative of with capabilities
      */
-    public function getCapabilities();
-
+    public function get_capabilities();
 }

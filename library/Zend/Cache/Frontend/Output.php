@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
 /**
  * Zend Framework
  *
@@ -21,12 +21,10 @@ declare(strict_types=1);
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
 /**
  * @see Zend_Cache_Core
  */
 #require_once 'Zend/Cache/Core.php';
-
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Frontend
@@ -35,8 +33,7 @@ declare(strict_types=1);
  */
 class Zend_Cache_Frontend_Output extends Zend_Cache_Core
 {
-    private $_idStack = [];
-
+    private $_id_stack = [];
     /**
      * Constructor
      *
@@ -45,9 +42,8 @@ class Zend_Cache_Frontend_Output extends Zend_Cache_Core
     public function __construct(array $options = [])
     {
         parent::__construct($options);
-        $this->_idStack = [];
+        $this->_id_stack = [];
     }
-
     /**
      * Start the cache
      *
@@ -56,22 +52,21 @@ class Zend_Cache_Frontend_Output extends Zend_Cache_Core
      * @param  boolean $echoData               If set to true, datas are sent to the browser if the cache is hit (simply returned else)
      * @return mixed True if the cache is hit (false else) with $echoData=true (default) ; string else (datas)
      */
-    public function start($id, $doNotTestCacheValidity = false, $echoData = true)
+    public function start($id, $do_not_test_cache_validity = false, $echo_data = true)
     {
-        $data = $this->load($id, $doNotTestCacheValidity);
+        $data = $this->load($id, $do_not_test_cache_validity);
         if ($data !== false) {
-            if ($echoData) {
-                echo($data);
+            if ($echo_data) {
+                echo $data;
                 return true;
             }
             return $data;
         }
         ob_start();
         ob_implicit_flush(false);
-        $this->_idStack[] = $id;
+        $this->_id_stack[] = $id;
         return false;
     }
-
     /**
      * Stop the cache
      *
@@ -82,21 +77,20 @@ class Zend_Cache_Frontend_Output extends Zend_Cache_Core
      * @param  int     $priority         integer between 0 (very low priority) and 10 (maximum priority) used by some particular backends
      * @return void
      */
-    public function end($tags = [], $specificLifetime = false, $forcedDatas = null, $echoData = true, $priority = 8)
+    public function end($tags = [], $specific_lifetime = false, $forced_datas = null, $echo_data = true, $priority = 8)
     {
-        if ($forcedDatas === null) {
+        if ($forced_datas === null) {
             $data = ob_get_clean();
         } else {
-            $data = & $forcedDatas;
+            $data =& $forced_datas;
         }
-        $id = array_pop($this->_idStack);
+        $id = array_pop($this->_id_stack);
         if ($id === null) {
-            Zend_Cache::throwException('use of end() without a start()');
+            Zend_Cache::throw_exception('use of end() without a start()');
         }
-        $this->save($data, $id, $tags, $specificLifetime, $priority);
-        if ($echoData) {
-            echo($data);
+        $this->save($data, $id, $tags, $specific_lifetime, $priority);
+        if ($echo_data) {
+            echo $data;
         }
     }
-
 }

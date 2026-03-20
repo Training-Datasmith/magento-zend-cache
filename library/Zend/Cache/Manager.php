@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
 /**
  * Zend Framework
  *
@@ -20,13 +20,10 @@ declare(strict_types=1);
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
 /** @see Zend_Cache_Exception */
 #require_once 'Zend/Cache/Exception.php';
-
 /** @see Zend_Cache */
 #require_once 'Zend/Cache.php';
-
 /**
  * @category   Zend
  * @package    Zend_Cache
@@ -39,107 +36,53 @@ class Zend_Cache_Manager
      * Constant holding reserved name for default Page Cache
      */
     public const PAGECACHE = 'page';
-
     /**
      * Constant holding reserved name for default Page Tag Cache
      */
     public const PAGETAGCACHE = 'pagetag';
-
     /**
      * Array of caches stored by the Cache Manager instance
      *
      * @var array
      */
     protected $_caches = [];
-
     /**
      * Array of ready made configuration templates for lazy
      * loading caches.
      *
      * @var array
      */
-    protected $_optionTemplates = [
+    protected $_option_templates = [
         // Simple Common Default
-        'default' => [
-            'frontend' => [
-                'name'    => 'Core',
-                'options' => [
-                    'automatic_serialization' => true,
-                ],
-            ],
-            'backend' => [
-                'name'    => 'File',
-                'options' => [
-                    // use system temp dir by default of file backend
-                    // 'cache_dir' => '../cache',
-                ],
-            ],
-        ],
-
+        'default' => ['frontend' => ['name' => 'Core', 'options' => ['automatic_serialization' => true]], 'backend' => ['name' => 'File', 'options' => []]],
         // Static Page HTML Cache
-        'page' => [
-            'frontend' => [
-                'name'    => 'Capture',
-                'options' => [
-                    'ignore_user_abort' => true,
-                ],
-            ],
-            'backend' => [
-                'name'    => 'Static',
-                'options' => [
-                    'public_dir' => '../public',
-                ],
-            ],
-        ],
-
+        'page' => ['frontend' => ['name' => 'Capture', 'options' => ['ignore_user_abort' => true]], 'backend' => ['name' => 'Static', 'options' => ['public_dir' => '../public']]],
         // Tag Cache
-        'pagetag' => [
-            'frontend' => [
-                'name'    => 'Core',
-                'options' => [
-                    'automatic_serialization' => true,
-                    'lifetime' => null,
-                ],
-            ],
-            'backend' => [
-                'name'    => 'File',
-                'options' => [
-                    // use system temp dir by default of file backend
-                    // 'cache_dir' => '../cache',
-                    // use default umask of file backend
-                    // 'cache_file_umask' => 0644
-                ],
-            ],
-        ],
+        'pagetag' => ['frontend' => ['name' => 'Core', 'options' => ['automatic_serialization' => true, 'lifetime' => null]], 'backend' => ['name' => 'File', 'options' => []]],
     ];
-
     /**
      * Set a new cache for the Cache Manager to contain
      *
      * @param  string $name
      */
-    public function setCache($name, Zend_Cache_Core $cache): self
+    public function set_cache($name, Zend_Cache_Core $cache): self
     {
         $this->_caches[$name] = $cache;
         return $this;
     }
-
     /**
      * Check if the Cache Manager contains the named cache object, or a named
      * configuration template to lazy load the cache object
      *
      * @param string $name
      */
-    public function hasCache($name): bool
+    public function has_cache($name): bool
     {
-        if (isset($this->_caches[$name])
-            || $this->hasCacheTemplate($name)
-        ) {
+        if (isset($this->_caches[$name]) || $this->has_cache_template($name)) {
             return true;
         }
         return false;
     }
-
     /**
      * Fetch the named cache object, or instantiate and return a cache object
      * using a named configuration template
@@ -147,50 +90,34 @@ class Zend_Cache_Manager
      * @param  string $name
      * @return Zend_Cache_Core
      */
-    public function getCache($name)
+    public function get_cache($name)
     {
         if (isset($this->_caches[$name])) {
             return $this->_caches[$name];
         }
-        if (isset($this->_optionTemplates[$name])) {
-            if ($name == self::PAGECACHE
-                && (!isset($this->_optionTemplates[$name]['backend']['options']['tag_cache'])
-                || !$this->_optionTemplates[$name]['backend']['options']['tag_cache'] instanceof Zend_Cache_Core)
-            ) {
-                $this->_optionTemplates[$name]['backend']['options']['tag_cache']
-                    = $this->getCache(self::PAGETAGCACHE);
+        if (isset($this->_option_templates[$name])) {
+            if ($name == self::PAGECACHE && (!isset($this->_option_templates[$name]['backend']['options']['tag_cache']) || !$this->_option_templates[$name]['backend']['options']['tag_cache'] instanceof Zend_Cache_Core)) {
+                $this->_option_templates[$name]['backend']['options']['tag_cache'] = $this->get_cache(self::PAGETAGCACHE);
             }
-
-            $this->_caches[$name] = Zend_Cache::factory(
-                $this->_optionTemplates[$name]['frontend']['name'],
-                $this->_optionTemplates[$name]['backend']['name'],
-                $this->_optionTemplates[$name]['frontend']['options'] ?? [],
-                $this->_optionTemplates[$name]['backend']['options'] ?? [],
-                $this->_optionTemplates[$name]['frontend']['customFrontendNaming'] ?? false,
-                $this->_optionTemplates[$name]['backend']['customBackendNaming'] ?? false,
-                $this->_optionTemplates[$name]['frontendBackendAutoload'] ?? false
-            );
-
+            $this->_caches[$name] = Zend_Cache::factory($this->_option_templates[$name]['frontend']['name'], $this->_option_templates[$name]['backend']['name'], $this->_option_templates[$name]['frontend']['options'] ?? [], $this->_option_templates[$name]['backend']['options'] ?? [], $this->_option_templates[$name]['frontend']['customFrontendNaming'] ?? false, $this->_option_templates[$name]['backend']['customBackendNaming'] ?? false, $this->_option_templates[$name]['frontendBackendAutoload'] ?? false);
             return $this->_caches[$name];
         }
     }
-
     /**
      * Fetch all available caches
      *
      * @return array An array of all available caches with it's names as key
      */
-    public function getCaches()
+    public function get_caches()
     {
         $caches = $this->_caches;
-        foreach ($this->_optionTemplates as $name => $tmp) {
+        foreach ($this->_option_templates as $name => $tmp) {
             if (!isset($caches[$name])) {
-                $caches[$name] = $this->getCache($name);
+                $caches[$name] = $this->get_cache($name);
             }
         }
         return $caches;
     }
-
     /**
      * Set a named configuration template from which a cache object can later
      * be lazy loaded
@@ -199,45 +126,41 @@ class Zend_Cache_Manager
      * @param  array  $options
      * @throws Zend_Cache_Exception
      */
-    public function setCacheTemplate($name, $options): self
+    public function set_cache_template($name, $options): self
     {
         if ($options instanceof Zend_Config) {
-            $options = $options->toArray();
+            $options = $options->to_array();
         } elseif (!is_array($options)) {
             #require_once 'Zend/Cache/Exception.php';
-            throw new Zend_Cache_Exception('Options passed must be in'
-                . ' an associative array or instance of Zend_Config');
+            throw new Zend_Cache_Exception('Options passed must be in' . ' an associative array or instance of Zend_Config');
         }
-        $this->_optionTemplates[$name] = $options;
+        $this->_option_templates[$name] = $options;
         return $this;
     }
-
     /**
      * Check if the named configuration template
      *
      * @param  string $name
      */
-    public function hasCacheTemplate($name): bool
+    public function has_cache_template($name): bool
     {
-        if (isset($this->_optionTemplates[$name])) {
+        if (isset($this->_option_templates[$name])) {
             return true;
         }
         return false;
     }
-
     /**
      * Get the named configuration template
      *
      * @param  string $name
      * @return array
      */
-    public function getCacheTemplate($name)
+    public function get_cache_template($name)
     {
-        if (isset($this->_optionTemplates[$name])) {
-            return $this->_optionTemplates[$name];
+        if (isset($this->_option_templates[$name])) {
+            return $this->_option_templates[$name];
         }
     }
-
     /**
      * Pass an array containing changes to be applied to a named
      * configuration
@@ -246,30 +169,26 @@ class Zend_Cache_Manager
      * @param  array $options
      * @throws Zend_Cache_Exception for invalid options format or if option templates do not have $name
      */
-    public function setTemplateOptions(string $name, $options): self
+    public function set_template_options(string $name, $options): self
     {
         if ($options instanceof Zend_Config) {
-            $options = $options->toArray();
+            $options = $options->to_array();
         } elseif (!is_array($options)) {
             #require_once 'Zend/Cache/Exception.php';
-            throw new Zend_Cache_Exception('Options passed must be in'
-                . ' an associative array or instance of Zend_Config');
+            throw new Zend_Cache_Exception('Options passed must be in' . ' an associative array or instance of Zend_Config');
         }
-        if (!isset($this->_optionTemplates[$name])) {
-            throw new Zend_Cache_Exception('A cache configuration template'
-                . 'does not exist with the name "' . $name . '"');
+        if (!isset($this->_option_templates[$name])) {
+            throw new Zend_Cache_Exception('A cache configuration template' . 'does not exist with the name "' . $name . '"');
         }
-        $this->_optionTemplates[$name]
-            = $this->_mergeOptions($this->_optionTemplates[$name], $options);
+        $this->_option_templates[$name] = $this->_merge_options($this->_option_templates[$name], $options);
         return $this;
     }
-
     /**
      * Simple method to merge two configuration arrays
      *
      * @return array
      */
-    protected function _mergeOptions(array $current, array $options)
+    protected function _merge_options(array $current, array $options)
     {
         if (isset($options['frontend']['name'])) {
             $current['frontend']['name'] = $options['frontend']['name'];

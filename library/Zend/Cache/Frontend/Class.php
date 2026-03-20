@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
 /**
  * Zend Framework
  *
@@ -21,12 +21,10 @@ declare(strict_types=1);
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
 /**
  * @see Zend_Cache_Core
  */
 #require_once 'Zend/Cache/Core.php';
-
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Frontend
@@ -53,20 +51,13 @@ class Zend_Cache_Frontend_Class extends Zend_Cache_Core
      *
      * @var array available options
      */
-    protected $_specificOptions = [
-        'cached_entity'      => null,
-        'cache_by_default'   => true,
-        'cached_methods'     => [],
-        'non_cached_methods' => [],
-    ];
-
+    protected $_specific_options = ['cached_entity' => null, 'cache_by_default' => true, 'cached_methods' => [], 'non_cached_methods' => []];
     /**
      * Tags array
      *
      * @var array
      */
     protected $_tags = [];
-
     /**
      * SpecificLifetime value
      *
@@ -74,15 +65,13 @@ class Zend_Cache_Frontend_Class extends Zend_Cache_Core
      *
      * @var bool|int
      */
-    protected $_specificLifetime = false;
-
+    protected $_specific_lifetime = false;
     /**
      * The cached object or the name of the cached abstract class
      *
      * @var mixed
      */
-    protected $_cachedEntity;
-
+    protected $_cached_entity;
     /**
      * The class name of the cached object or cached abstract class
      *
@@ -90,15 +79,13 @@ class Zend_Cache_Frontend_Class extends Zend_Cache_Core
      *
      * @var string
      */
-    protected $_cachedEntityLabel = '';
-
+    protected $_cached_entity_label = '';
     /**
      * Priority (used by some particular backends)
      *
      * @var int
      */
     protected $_priority = 8;
-
     /**
      * Constructor
      *
@@ -108,36 +95,33 @@ class Zend_Cache_Frontend_Class extends Zend_Cache_Core
     public function __construct(array $options = [])
     {
         foreach ($options as $name => $value) {
-            $this->setOption($name, $value);
+            $this->set_option($name, $value);
         }
-        if ($this->_specificOptions['cached_entity'] === null) {
-            Zend_Cache::throwException('cached_entity must be set !');
+        if ($this->_specific_options['cached_entity'] === null) {
+            Zend_Cache::throw_exception('cached_entity must be set !');
         }
-        $this->setCachedEntity($this->_specificOptions['cached_entity']);
-        $this->setOption('automatic_serialization', true);
+        $this->set_cached_entity($this->_specific_options['cached_entity']);
+        $this->set_option('automatic_serialization', true);
     }
-
     /**
      * Set a specific life time
      *
      * @param  bool|int $specificLifetime
      * @return void
      */
-    public function setSpecificLifetime($specificLifetime = false)
+    public function set_specific_lifetime($specific_lifetime = false)
     {
-        $this->_specificLifetime = $specificLifetime;
+        $this->_specific_lifetime = $specific_lifetime;
     }
-
     /**
      * Set the priority (used by some particular backends)
      *
      * @param int $priority integer between 0 (very low priority) and 10 (maximum priority)
      */
-    public function setPriority($priority)
+    public function set_priority($priority)
     {
         $this->_priority = $priority;
     }
-
     /**
      * Public frontend to set an option
      *
@@ -148,15 +132,14 @@ class Zend_Cache_Frontend_Class extends Zend_Cache_Core
      * @throws Zend_Cache_Exception
      * @return void
      */
-    public function setOption($name, $value)
+    public function set_option($name, $value)
     {
         if ($name == 'cached_entity') {
-            $this->setCachedEntity($value);
+            $this->set_cached_entity($value);
         } else {
-            parent::setOption($name, $value);
+            parent::set_option($name, $value);
         }
     }
-
     /**
      * Specific method to set the cachedEntity
      *
@@ -165,36 +148,30 @@ class Zend_Cache_Frontend_Class extends Zend_Cache_Core
      *
      * @param mixed $cachedEntity
      */
-    public function setCachedEntity($cachedEntity)
+    public function set_cached_entity($cached_entity)
     {
-        if (!is_string($cachedEntity) && !is_object($cachedEntity)) {
-            Zend_Cache::throwException(
-                'cached_entity must be an object or a class name'
-            );
+        if (!is_string($cached_entity) && !is_object($cached_entity)) {
+            Zend_Cache::throw_exception('cached_entity must be an object or a class name');
         }
-
-        $this->_cachedEntity                     = $cachedEntity;
-        $this->_specificOptions['cached_entity'] = $cachedEntity;
-
-        if (is_string($this->_cachedEntity)) {
-            $this->_cachedEntityLabel = $this->_cachedEntity;
+        $this->_cached_entity = $cached_entity;
+        $this->_specific_options['cached_entity'] = $cached_entity;
+        if (is_string($this->_cached_entity)) {
+            $this->_cached_entity_label = $this->_cached_entity;
         } else {
-            $ro = new ReflectionObject($this->_cachedEntity);
-            $this->_cachedEntityLabel = $ro->getName();
+            $ro = new Reflection_Object($this->_cached_entity);
+            $this->_cached_entity_label = $ro->get_name();
         }
     }
-
     /**
      * Set the cache array
      *
      * @param  array $tags
      * @return void
      */
-    public function setTagsArray($tags = [])
+    public function set_tags_array($tags = [])
     {
         $this->_tags = $tags;
     }
-
     /**
      * Main method : call the specified method or get the result from cache
      *
@@ -205,26 +182,20 @@ class Zend_Cache_Frontend_Class extends Zend_Cache_Core
      */
     public function __call(string $name, array $parameters)
     {
-        $callback = [$this->_cachedEntity, $name];
-
+        $callback = [$this->_cached_entity, $name];
         if (!is_callable($callback, false)) {
-            Zend_Cache::throwException('Invalid callback');
+            Zend_Cache::throw_exception('Invalid callback');
         }
-
-        $cacheBool1 = $this->_specificOptions['cache_by_default'];
-        $cacheBool2 = in_array($name, $this->_specificOptions['cached_methods']);
-        $cacheBool3 = in_array($name, $this->_specificOptions['non_cached_methods']);
-        $cache      = (($cacheBool1 || $cacheBool2) && (!$cacheBool3));
-
+        $cache_bool1 = $this->_specific_options['cache_by_default'];
+        $cache_bool2 = in_array($name, $this->_specific_options['cached_methods']);
+        $cache_bool3 = in_array($name, $this->_specific_options['non_cached_methods']);
+        $cache = ($cache_bool1 || $cache_bool2) && !$cache_bool3;
         if (!$cache) {
             // We do not have not cache
             return call_user_func_array($callback, $parameters);
         }
-
-        $id = $this->makeId($name, $parameters);
-        if (($rs = $this->load($id)) && (array_key_exists(0, $rs))
-            && (array_key_exists(1, $rs))
-        ) {
+        $id = $this->make_id($name, $parameters);
+        if (($rs = $this->load($id)) && array_key_exists(0, $rs) && array_key_exists(1, $rs)) {
             // A cache is available
             $output = $rs[0];
             $return = $rs[1];
@@ -232,39 +203,28 @@ class Zend_Cache_Frontend_Class extends Zend_Cache_Core
             // A cache is not available (or not valid for this frontend)
             ob_start();
             ob_implicit_flush(false);
-
             try {
                 $return = call_user_func_array($callback, $parameters);
                 $output = ob_get_clean();
-                $data   = [$output, $return];
-
-                $this->save(
-                    $data,
-                    $id,
-                    $this->_tags,
-                    $this->_specificLifetime,
-                    $this->_priority
-                );
+                $data = [$output, $return];
+                $this->save($data, $id, $this->_tags, $this->_specific_lifetime, $this->_priority);
             } catch (Exception $e) {
                 ob_end_clean();
                 throw $e;
             }
         }
-
         echo $output;
         return $return;
     }
-
     /**
      * ZF-9970
      *
      * @deprecated
      */
-    private function _makeId($name, array $args)
+    private function _make_id($name, array $args)
     {
-        return $this->makeId($name, $args);
+        return $this->make_id($name, $args);
     }
-
     /**
      * Make a cache id from the method name and parameters
      *
@@ -272,8 +232,8 @@ class Zend_Cache_Frontend_Class extends Zend_Cache_Core
      * @param  array  $args Method parameters
      * @return string Cache id
      */
-    public function makeId(string $name, array $args = []): string
+    public function make_id(string $name, array $args = []): string
     {
-        return md5($this->_cachedEntityLabel . '__' . $name . '__' . serialize($args));
+        return md5($this->_cached_entity_label . '__' . $name . '__' . serialize($args));
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
 /**
  * Zend Framework
  *
@@ -21,12 +21,10 @@ declare(strict_types=1);
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
 /**
  * @see Zend_Cache_Core
  */
 #require_once 'Zend/Cache/Core.php';
-
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Frontend
@@ -39,16 +37,13 @@ class Zend_Cache_Frontend_Capture extends Zend_Cache_Core
      * Page identifiers
      * @var array
      */
-    protected $_idStack = [];
-
+    protected $_id_stack = [];
     /**
      * Tags
      * @var array
      */
     protected $_tags = [];
-
     protected $_extension;
-
     /**
      * Start the cache
      *
@@ -61,10 +56,9 @@ class Zend_Cache_Frontend_Capture extends Zend_Cache_Core
         $this->_extension = $extension;
         ob_start([$this, '_flush']);
         ob_implicit_flush(false);
-        $this->_idStack[] = $id;
+        $this->_id_stack[] = $id;
         return false;
     }
-
     /**
      * callback for output buffering
      * (shouldn't really be called manually)
@@ -74,9 +68,9 @@ class Zend_Cache_Frontend_Capture extends Zend_Cache_Core
      */
     public function _flush($data)
     {
-        $id = array_pop($this->_idStack);
+        $id = array_pop($this->_id_stack);
         if ($id === null) {
-            Zend_Cache::throwException('use of _flush() without a start()');
+            Zend_Cache::throw_exception('use of _flush() without a start()');
         }
         if ($this->_extension) {
             $this->save(serialize([$data, $this->_extension]), $id, $this->_tags);

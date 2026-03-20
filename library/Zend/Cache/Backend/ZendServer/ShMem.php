@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
 /**
  * Zend Framework
  *
@@ -21,20 +21,17 @@ declare(strict_types=1);
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
 /** @see Zend_Cache_Backend_Interface */
 #require_once 'Zend/Cache/Backend/Interface.php';
-
 /** @see Zend_Cache_Backend_ZendServer */
 #require_once 'Zend/Cache/Backend/ZendServer.php';
-
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
  * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cache_Backend_ZendServer_ShMem extends Zend_Cache_Backend_ZendServer implements Zend_Cache_Backend_Interface
+class Zend_cache_backend_zend_Server_sh_Mem extends Zend_cache_backend_zend_Server implements Zend_Cache_Backend_Interface
 {
     /**
      * Constructor
@@ -45,11 +42,10 @@ class Zend_Cache_Backend_ZendServer_ShMem extends Zend_Cache_Backend_ZendServer 
     public function __construct(array $options = [])
     {
         if (!function_exists('zend_shm_cache_store')) {
-            Zend_Cache::throwException('Zend_Cache_ZendServer_ShMem backend has to be used within Zend Server environment.');
+            Zend_Cache::throw_exception('Zend_Cache_ZendServer_ShMem backend has to be used within Zend Server environment.');
         }
         parent::__construct($options);
     }
-
     /**
      * Store data
      *
@@ -57,19 +53,14 @@ class Zend_Cache_Backend_ZendServer_ShMem extends Zend_Cache_Backend_ZendServer 
      * @param string $id         Cache id
      * @param int    $timeToLive Time to live in seconds
      */
-    protected function _store($data, $id, $timeToLive): bool
+    protected function _store($data, $id, $time_to_live): bool
     {
-        if (zend_shm_cache_store(
-            $this->_options['namespace'] . '::' . $id,
-            $data,
-            $timeToLive
-        ) === false) {
+        if (zend_shm_cache_store($this->_options['namespace'] . '::' . $id, $data, $time_to_live) === false) {
             $this->_log('Store operation failed.');
             return false;
         }
         return true;
     }
-
     /**
      * Fetch data
      *
@@ -80,7 +71,6 @@ class Zend_Cache_Backend_ZendServer_ShMem extends Zend_Cache_Backend_ZendServer 
     {
         return zend_shm_cache_fetch($this->_options['namespace'] . '::' . $id);
     }
-
     /**
      * Unset data
      *
@@ -91,7 +81,6 @@ class Zend_Cache_Backend_ZendServer_ShMem extends Zend_Cache_Backend_ZendServer 
     {
         return zend_shm_cache_delete($this->_options['namespace'] . '::' . $id);
     }
-
     /**
      * Clear cache
      */

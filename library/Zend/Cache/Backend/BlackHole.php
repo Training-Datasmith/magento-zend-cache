@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
 /**
  * Zend Framework
  *
@@ -21,24 +21,21 @@ declare(strict_types=1);
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
 /**
  * @see Zend_Cache_Backend_Interface
  */
 #require_once 'Zend/Cache/Backend/ExtendedInterface.php';
-
 /**
  * @see Zend_Cache_Backend
  */
 #require_once 'Zend/Cache/Backend.php';
-
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
  * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cache_Backend_BlackHole extends Zend_Cache_Backend implements Zend_Cache_Backend_ExtendedInterface
+class Zend_cache_backend_black_Hole extends Zend_Cache_Backend implements Zend_cache_backend_extended_Interface
 {
     /**
      * Test if a cache is available for the given id and (if yes) return it (false else)
@@ -47,11 +44,10 @@ class Zend_Cache_Backend_BlackHole extends Zend_Cache_Backend implements Zend_Ca
      * @param  boolean $doNotTestCacheValidity if set to true, the cache validity won't be tested
      * @return string|false cached datas
      */
-    public function load($id, $doNotTestCacheValidity = false): bool
+    public function load($id, $do_not_test_cache_validity = false): bool
     {
         return false;
     }
-
     /**
      * Test if a cache is available or not (for the given id)
      *
@@ -62,7 +58,6 @@ class Zend_Cache_Backend_BlackHole extends Zend_Cache_Backend implements Zend_Ca
     {
         return false;
     }
-
     /**
      * Save some string datas into a cache record
      *
@@ -75,11 +70,10 @@ class Zend_Cache_Backend_BlackHole extends Zend_Cache_Backend implements Zend_Ca
      * @param  int    $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
      * @return boolean true if no problem
      */
-    public function save($data, $id, $tags = [], $specificLifetime = false): bool
+    public function save($data, $id, $tags = [], $specific_lifetime = false): bool
     {
         return true;
     }
-
     /**
      * Remove a cache record
      *
@@ -90,7 +84,6 @@ class Zend_Cache_Backend_BlackHole extends Zend_Cache_Backend implements Zend_Ca
     {
         return true;
     }
-
     /**
      * Clean some cache records
      *
@@ -112,27 +105,24 @@ class Zend_Cache_Backend_BlackHole extends Zend_Cache_Backend implements Zend_Ca
     {
         return true;
     }
-
     /**
      * Return an array of stored cache ids
      *
      * @return array array of stored cache ids (string)
      */
-    public function getIds(): array
+    public function get_ids(): array
     {
         return [];
     }
-
     /**
      * Return an array of stored tags
      *
      * @return array array of stored tags (string)
      */
-    public function getTags(): array
+    public function get_tags(): array
     {
         return [];
     }
-
     /**
      * Return an array of stored cache ids which match given tags
      *
@@ -141,11 +131,10 @@ class Zend_Cache_Backend_BlackHole extends Zend_Cache_Backend implements Zend_Ca
      * @param array $tags array of tags
      * @return array array of matching cache ids (string)
      */
-    public function getIdsMatchingTags($tags = []): array
+    public function get_ids_matching_tags($tags = []): array
     {
         return [];
     }
-
     /**
      * Return an array of stored cache ids which don't match given tags
      *
@@ -154,11 +143,10 @@ class Zend_Cache_Backend_BlackHole extends Zend_Cache_Backend implements Zend_Ca
      * @param array $tags array of tags
      * @return array array of not matching cache ids (string)
      */
-    public function getIdsNotMatchingTags($tags = []): array
+    public function get_ids_not_matching_tags($tags = []): array
     {
         return [];
     }
-
     /**
      * Return an array of stored cache ids which match any given tags
      *
@@ -167,22 +155,20 @@ class Zend_Cache_Backend_BlackHole extends Zend_Cache_Backend implements Zend_Ca
      * @param  array $tags array of tags
      * @return array array of any matching cache ids (string)
      */
-    public function getIdsMatchingAnyTags($tags = []): array
+    public function get_ids_matching_any_tags($tags = []): array
     {
         return [];
     }
-
     /**
      * Return the filling percentage of the backend storage
      *
      * @return int integer between 0 and 100
      * @throws Zend_Cache_Exception
      */
-    public function getFillingPercentage(): int
+    public function get_filling_percentage(): int
     {
         return 0;
     }
-
     /**
      * Return an array of metadatas for the given cache id
      *
@@ -194,11 +180,10 @@ class Zend_Cache_Backend_BlackHole extends Zend_Cache_Backend implements Zend_Ca
      * @param  string $id cache id
      * @return array array of metadatas (false if the cache id is not found)
      */
-    public function getMetadatas($id): bool
+    public function get_metadatas($id): bool
     {
         return false;
     }
-
     /**
      * Give (if possible) an extra lifetime to the given cache id
      *
@@ -206,11 +191,10 @@ class Zend_Cache_Backend_BlackHole extends Zend_Cache_Backend implements Zend_Ca
      * @param  int $extraLifetime
      * @return boolean true if ok
      */
-    public function touch($id, $extraLifetime): bool
+    public function touch($id, $extra_lifetime): bool
     {
         return false;
     }
-
     /**
      * Return an associative array of capabilities (booleans) of the backend
      *
@@ -225,18 +209,10 @@ class Zend_Cache_Backend_BlackHole extends Zend_Cache_Backend implements Zend_Ca
      *
      * @return array associative of with capabilities
      */
-    public function getCapabilities(): array
+    public function get_capabilities(): array
     {
-        return [
-            'automatic_cleaning' => true,
-            'tags'               => true,
-            'expired_read'       => true,
-            'priority'           => true,
-            'infinite_lifetime'  => true,
-            'get_list'           => true,
-        ];
+        return ['automatic_cleaning' => true, 'tags' => true, 'expired_read' => true, 'priority' => true, 'infinite_lifetime' => true, 'get_list' => true];
     }
-
     /**
      * PUBLIC METHOD FOR UNIT TESTING ONLY !
      *

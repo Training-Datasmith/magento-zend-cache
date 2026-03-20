@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
 /**
  * Zend Framework
  *
@@ -21,20 +21,17 @@ declare(strict_types=1);
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
 /** @see Zend_Cache_Backend_Interface */
 #require_once 'Zend/Cache/Backend/Interface.php';
-
 /** @see Zend_Cache_Backend */
 #require_once 'Zend/Cache/Backend.php';
-
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
  * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implements Zend_Cache_Backend_Interface
+abstract class Zend_cache_backend_zend_Server extends Zend_Cache_Backend implements Zend_Cache_Backend_Interface
 {
     /**
      * Available options
@@ -44,10 +41,7 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
      *
      * @var array available options
      */
-    protected $_options = [
-        'namespace' => 'zendframework',
-    ];
-
+    protected $_options = ['namespace' => 'zendframework'];
     /**
      * Store data
      *
@@ -56,8 +50,7 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
      * @param int    $timeToLive  Time to live in seconds
      * @throws Zend_Cache_Exception
      */
-    abstract protected function _store($data, $id, $timeToLive);
-
+    abstract protected function _store($data, $id, $time_to_live);
     /**
      * Fetch data
      *
@@ -65,19 +58,16 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
      * @throws Zend_Cache_Exception
      */
     abstract protected function _fetch($id);
-
     /**
      * Unset data
      *
      * @param string $id          Cache id
      */
     abstract protected function _unset($id);
-
     /**
      * Clear cache
      */
     abstract protected function _clear();
-
     /**
      * Test if a cache is available for the given id and (if yes) return it (false else)
      *
@@ -85,7 +75,7 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
      * @param  boolean $doNotTestCacheValidity if set to true, the cache validity won't be tested
      * @return string cached datas (or false)
      */
-    public function load($id, $doNotTestCacheValidity = false)
+    public function load($id, $do_not_test_cache_validity = false)
     {
         $tmp = $this->_fetch($id);
         if ($tmp !== null) {
@@ -93,7 +83,6 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
         }
         return false;
     }
-
     /**
      * Test if a cache is available or not (for the given id)
      *
@@ -106,26 +95,24 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
         $tmp = $this->_fetch('internal-metadatas---' . $id);
         if ($tmp !== false) {
             if (!is_array($tmp) || !isset($tmp['mtime'])) {
-                Zend_Cache::throwException('Cache metadata for \'' . $id . '\' id is corrupted');
+                Zend_Cache::throw_exception('Cache metadata for \'' . $id . '\' id is corrupted');
             }
             return $tmp['mtime'];
         }
         return false;
     }
-
     /**
      * Compute & return the expire time
      *
      * @return int expire time (unix timestamp)
      */
-    private function _expireTime($lifetime)
+    private function _expire_time($lifetime)
     {
         if ($lifetime === null) {
             return 9999999999;
         }
         return time() + $lifetime;
     }
-
     /**
      * Save some string datas into a cache record
      *
@@ -138,22 +125,15 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
      * @param int $specificLifetime if != false, set a specific lifetime for this cache record (null => infinite lifetime)
      * @return boolean true if no problem
      */
-    public function save($data, $id, $tags = [], $specificLifetime = false)
+    public function save($data, $id, $tags = [], $specific_lifetime = false)
     {
-        $lifetime = $this->getLifetime($specificLifetime);
-        $metadatas = [
-            'mtime' => time(),
-            'expire' => $this->_expireTime($lifetime),
-        ];
-
+        $lifetime = $this->get_lifetime($specific_lifetime);
+        $metadatas = ['mtime' => time(), 'expire' => $this->_expire_time($lifetime)];
         if (count($tags) > 0) {
             $this->_log('Zend_Cache_Backend_ZendServer::save() : tags are unsupported by the ZendServer backends');
         }
-
-        return  $this->_store($data, $id, $lifetime) &&
-                $this->_store($metadatas, 'internal-metadatas---' . $id, $lifetime);
+        return $this->_store($data, $id, $lifetime) && $this->_store($metadatas, 'internal-metadatas---' . $id, $lifetime);
     }
-
     /**
      * Remove a cache record
      *
@@ -164,10 +144,8 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
     {
         $result1 = $this->_unset($id);
         $result2 = $this->_unset('internal-metadatas---' . $id);
-
         return $result1 && $result2;
     }
-
     /**
      * Clean some cache records
      *
@@ -199,7 +177,7 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
                 $this->_log('Zend_Cache_Backend_ZendServer::clean() : tags are unsupported by the Zend Server backends.');
                 break;
             default:
-                Zend_Cache::throwException('Invalid mode for clean() method');
+                Zend_Cache::throw_exception('Invalid mode for clean() method');
                 break;
         }
     }

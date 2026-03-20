@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
 /**
  * Zend Framework
  *
@@ -20,7 +20,6 @@ declare(strict_types=1);
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
-
 /**
  * @package    Zend_Cache
  * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
@@ -33,14 +32,12 @@ class Zend_Cache_Core
      */
     public const BACKEND_NOT_SUPPORTS_TAG = 'tags are not supported by the current backend';
     public const BACKEND_NOT_IMPLEMENTS_EXTENDED_IF = 'Current backend doesn\'t implement the Zend_Cache_Backend_ExtendedInterface, so this method is not available';
-
     /**
      * Backend Object
      *
      * @var Zend_Cache_Backend_Interface $_backend
      */
     protected $_backend;
-
     /**
      * Available options
      *
@@ -81,53 +78,37 @@ class Zend_Cache_Core
      *
      * @var array $_options available options
      */
-    protected $_options = [
-        'write_control'             => true,
-        'caching'                   => true,
-        'cache_id_prefix'           => null,
-        'automatic_serialization'   => false,
-        'automatic_cleaning_factor' => 10,
-        'lifetime'                  => 3600,
-        'logging'                   => false,
-        'logger'                    => null,
-        'ignore_user_abort'         => false,
-    ];
-
+    protected $_options = ['write_control' => true, 'caching' => true, 'cache_id_prefix' => null, 'automatic_serialization' => false, 'automatic_cleaning_factor' => 10, 'lifetime' => 3600, 'logging' => false, 'logger' => null, 'ignore_user_abort' => false];
     /**
      * Array of options which have to be transfered to backend
      *
      * @var array $_directivesList
      */
-    protected static $_directivesList = ['lifetime', 'logging', 'logger'];
-
+    protected static $_directives_list = ['lifetime', 'logging', 'logger'];
     /**
      * Not used for the core, just a sort a hint to get a common setOption() method (for the core and for frontends)
      *
      * @var array $_specificOptions
      */
-    protected $_specificOptions = [];
-
+    protected $_specific_options = [];
     /**
      * Last used cache id
      *
      * @var string $_lastId
      */
-    private $_lastId;
-
+    private $_last_id;
     /**
      * True if the backend implements Zend_Cache_Backend_ExtendedInterface
      *
      * @var boolean $_extendedBackend
      */
-    protected $_extendedBackend = false;
-
+    protected $_extended_backend = false;
     /**
      * Array of capabilities of the backend (only if it implements Zend_Cache_Backend_ExtendedInterface)
      *
      * @var array
      */
-    protected $_backendCapabilities = [];
-
+    protected $_backend_capabilities = [];
     /**
      * Constructor
      *
@@ -137,63 +118,57 @@ class Zend_Cache_Core
     public function __construct($options = [])
     {
         if ($options instanceof Zend_Config) {
-            $options = $options->toArray();
+            $options = $options->to_array();
         }
         if (!is_array($options)) {
-            Zend_Cache::throwException('Options passed were not an array'
-            . ' or Zend_Config instance.');
+            Zend_Cache::throw_exception('Options passed were not an array' . ' or Zend_Config instance.');
         }
         foreach ($options as $name => $value) {
-            $this->setOption($name, $value);
+            $this->set_option($name, $value);
         }
-        $this->_loggerSanity();
+        $this->_logger_sanity();
     }
-
     /**
      * Set options using an instance of type Zend_Config
      */
-    public function setConfig(Zend_Config $config): self
+    public function set_config(Zend_Config $config): self
     {
-        $options = $config->toArray();
+        $options = $config->to_array();
         foreach ($options as $name => $value) {
-            $this->setOption($name, $value);
+            $this->set_option($name, $value);
         }
         return $this;
     }
-
     /**
      * Set the backend
      *
      * @throws Zend_Cache_Exception
      * @return void
      */
-    public function setBackend(Zend_Cache_Backend $backendObject)
+    public function set_backend(Zend_Cache_Backend $backend_object)
     {
-        $this->_backend = $backendObject;
+        $this->_backend = $backend_object;
         // some options (listed in $_directivesList) have to be given
         // to the backend too (even if they are not "backend specific")
         $directives = [];
-        foreach (Zend_Cache_Core::$_directivesList as $directive) {
+        foreach (Zend_Cache_Core::$_directives_list as $directive) {
             $directives[$directive] = $this->_options[$directive];
         }
-        $this->_backend->setDirectives($directives);
+        $this->_backend->set_directives($directives);
         if (in_array('Zend_Cache_Backend_ExtendedInterface', class_implements($this->_backend))) {
-            $this->_extendedBackend = true;
-            $this->_backendCapabilities = $this->_backend->getCapabilities();
+            $this->_extended_backend = true;
+            $this->_backend_capabilities = $this->_backend->get_capabilities();
         }
-
     }
-
     /**
      * Returns the backend
      *
      * @return Zend_Cache_Backend backend object
      */
-    public function getBackend()
+    public function get_backend()
     {
         return $this->_backend;
     }
-
     /**
      * Public frontend to set an option
      *
@@ -204,24 +179,23 @@ class Zend_Cache_Core
      * @throws Zend_Cache_Exception
      * @return void
      */
-    public function setOption($name, $value)
+    public function set_option($name, $value)
     {
         if (!is_string($name)) {
-            Zend_Cache::throwException('Incorrect option name!');
+            Zend_Cache::throw_exception('Incorrect option name!');
         }
         $name = strtolower($name);
         if (array_key_exists($name, $this->_options)) {
             // This is a Core option
-            $this->_setOption($name, $value);
+            $this->_set_option($name, $value);
             return;
         }
-        if (array_key_exists($name, $this->_specificOptions)) {
+        if (array_key_exists($name, $this->_specific_options)) {
             // This a specic option of this frontend
-            $this->_specificOptions[$name] = $value;
+            $this->_specific_options[$name] = $value;
             return;
         }
     }
-
     /**
      * Public frontend to get an option value
      *
@@ -229,23 +203,19 @@ class Zend_Cache_Core
      * @throws Zend_Cache_Exception
      * @return mixed option value
      */
-    public function getOption($name)
+    public function get_option($name)
     {
         $name = strtolower($name);
-
         if (array_key_exists($name, $this->_options)) {
             // This is a Core option
             return $this->_options[$name];
         }
-
-        if (array_key_exists($name, $this->_specificOptions)) {
+        if (array_key_exists($name, $this->_specific_options)) {
             // This a specic option of this frontend
-            return $this->_specificOptions[$name];
+            return $this->_specific_options[$name];
         }
-
-        Zend_Cache::throwException("Incorrect option name : $name");
+        Zend_Cache::throw_exception("Incorrect option name : {$name}");
     }
-
     /**
      * Set an option
      *
@@ -254,17 +224,16 @@ class Zend_Cache_Core
      * @throws Zend_Cache_Exception
      * @return void
      */
-    private function _setOption($name, $value)
+    private function _set_option($name, $value)
     {
         if (!is_string($name) || !array_key_exists($name, $this->_options)) {
-            Zend_Cache::throwException("Incorrect option name : $name");
+            Zend_Cache::throw_exception("Incorrect option name : {$name}");
         }
         if ($name == 'lifetime' && empty($value)) {
             $value = null;
         }
         $this->_options[$name] = $value;
     }
-
     /**
      * Force a new lifetime
      *
@@ -273,14 +242,11 @@ class Zend_Cache_Core
      * @param  int $newLifetime New lifetime (in seconds)
      * @return void
      */
-    public function setLifetime($newLifetime)
+    public function set_lifetime($new_lifetime)
     {
-        $this->_options['lifetime'] = $newLifetime;
-        $this->_backend->setDirectives([
-            'lifetime' => $newLifetime,
-        ]);
+        $this->_options['lifetime'] = $new_lifetime;
+        $this->_backend->set_directives(['lifetime' => $new_lifetime]);
     }
-
     /**
      * Test if a cache is available for the given id and (if yes) return it (false else)
      *
@@ -289,28 +255,27 @@ class Zend_Cache_Core
      * @param  boolean $doNotUnserialize       Do not serialize (even if automatic_serialization is true) => for internal use
      * @return mixed|false Cached datas
      */
-    public function load($id, $doNotTestCacheValidity = false, $doNotUnserialize = false)
+    public function load($id, $do_not_test_cache_validity = false, $do_not_unserialize = false)
     {
         if (!$this->_options['caching']) {
             return false;
         }
-        $id = $this->_id($id); // cache id may need prefix
-        $this->_lastId = $id;
-        $this->_validateIdOrTag($id);
-
+        $id = $this->_id($id);
+        // cache id may need prefix
+        $this->_last_id = $id;
+        $this->_validate_id_or_tag($id);
         $this->_log("Zend_Cache_Core: load item '{$id}'", 7);
-        $data = $this->_backend->load($id, $doNotTestCacheValidity);
+        $data = $this->_backend->load($id, $do_not_test_cache_validity);
         if ($data === false) {
             // no cache available
             return false;
         }
-        if ((!$doNotUnserialize) && $this->_options['automatic_serialization']) {
+        if (!$do_not_unserialize && $this->_options['automatic_serialization']) {
             // we need to unserialize before sending the result
             return unserialize($data, ['allowed_classes' => false]);
         }
         return $data;
     }
-
     /**
      * Test if a cache is available for the given id
      *
@@ -322,14 +287,13 @@ class Zend_Cache_Core
         if (!$this->_options['caching']) {
             return false;
         }
-        $id = $this->_id($id); // cache id may need prefix
-        $this->_validateIdOrTag($id);
-        $this->_lastId = $id;
-
+        $id = $this->_id($id);
+        // cache id may need prefix
+        $this->_validate_id_or_tag($id);
+        $this->_last_id = $id;
         $this->_log("Zend_Cache_Core: test item '{$id}'", 7);
         return $this->_backend->test($id);
     }
-
     /**
      * Save some data in a cache
      *
@@ -341,33 +305,30 @@ class Zend_Cache_Core
      * @throws Zend_Cache_Exception
      * @return boolean True if no problem
      */
-    public function save($data, $id = null, $tags = [], $specificLifetime = false, $priority = 8): bool
+    public function save($data, $id = null, $tags = [], $specific_lifetime = false, $priority = 8): bool
     {
         if (!$this->_options['caching']) {
             return true;
         }
         if ($id === null) {
-            $id = $this->_lastId;
+            $id = $this->_last_id;
         } else {
             $id = $this->_id($id);
         }
-        $this->_validateIdOrTag($id);
-        $this->_validateTagsArray($tags);
+        $this->_validate_id_or_tag($id);
+        $this->_validate_tags_array($tags);
         if ($this->_options['automatic_serialization']) {
             // we need to serialize datas before storing them
             $data = serialize($data);
-        } else {
-            if (!is_string($data)) {
-                Zend_Cache::throwException('Datas must be string or set automatic_serialization = true');
-            }
+        } else if (!is_string($data)) {
+            Zend_Cache::throw_exception('Datas must be string or set automatic_serialization = true');
         }
-
         // automatic cleaning
         if ($this->_options['automatic_cleaning_factor'] > 0) {
             $rand = random_int(1, $this->_options['automatic_cleaning_factor']);
             if ($rand == 1) {
                 //  new way                 || deprecated way
-                if ($this->_extendedBackend || method_exists($this->_backend, 'isAutomaticCleaningAvailable')) {
+                if ($this->_extended_backend || method_exists($this->_backend, 'isAutomaticCleaningAvailable')) {
                     $this->_log('Zend_Cache_Core::save(): automatic cleaning running', 7);
                     $this->clean(Zend_Cache::CLEANING_MODE_OLD);
                 } else {
@@ -375,27 +336,24 @@ class Zend_Cache_Core
                 }
             }
         }
-
         $this->_log("Zend_Cache_Core: save item '{$id}'", 7);
         if ($this->_options['ignore_user_abort']) {
             $abort = ignore_user_abort(true);
         }
-        if (($this->_extendedBackend) && ($this->_backendCapabilities['priority'])) {
-            $result = $this->_backend->save($data, $id, $tags, $specificLifetime, $priority);
+        if ($this->_extended_backend && $this->_backend_capabilities['priority']) {
+            $result = $this->_backend->save($data, $id, $tags, $specific_lifetime, $priority);
         } else {
-            $result = $this->_backend->save($data, $id, $tags, $specificLifetime);
+            $result = $this->_backend->save($data, $id, $tags, $specific_lifetime);
         }
         if ($this->_options['ignore_user_abort']) {
             ignore_user_abort($abort);
         }
-
         if (!$result) {
             // maybe the cache is corrupted, so we remove it !
             $this->_log("Zend_Cache_Core::save(): failed to save item '{$id}' -> removing it", 4);
             $this->_backend->remove($id);
             return false;
         }
-
         if ($this->_options['write_control']) {
             $data2 = $this->_backend->load($id, true);
             if ($data != $data2) {
@@ -404,10 +362,8 @@ class Zend_Cache_Core
                 return false;
             }
         }
-
         return true;
     }
-
     /**
      * Remove a cache
      *
@@ -419,13 +375,12 @@ class Zend_Cache_Core
         if (!$this->_options['caching']) {
             return true;
         }
-        $id = $this->_id($id); // cache id may need prefix
-        $this->_validateIdOrTag($id);
-
+        $id = $this->_id($id);
+        // cache id may need prefix
+        $this->_validate_id_or_tag($id);
         $this->_log("Zend_Cache_Core: remove item '{$id}'", 7);
         return $this->_backend->remove($id);
     }
-
     /**
      * Clean cache entries
      *
@@ -449,18 +404,12 @@ class Zend_Cache_Core
         if (!$this->_options['caching']) {
             return true;
         }
-        if (!in_array($mode, [Zend_Cache::CLEANING_MODE_ALL,
-                                   Zend_Cache::CLEANING_MODE_OLD,
-                                   Zend_Cache::CLEANING_MODE_MATCHING_TAG,
-                                   Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG,
-                                   Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG])) {
-            Zend_Cache::throwException('Invalid cleaning mode');
+        if (!in_array($mode, [Zend_Cache::CLEANING_MODE_ALL, Zend_Cache::CLEANING_MODE_OLD, Zend_Cache::CLEANING_MODE_MATCHING_TAG, Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG, Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG])) {
+            Zend_Cache::throw_exception('Invalid cleaning mode');
         }
-        $this->_validateTagsArray($tags);
-
+        $this->_validate_tags_array($tags);
         return $this->_backend->clean($mode, $tags);
     }
-
     /**
      * Return an array of stored cache ids which match given tags
      *
@@ -469,31 +418,27 @@ class Zend_Cache_Core
      * @param array $tags array of tags
      * @return array array of matching cache ids (string)
      */
-    public function getIdsMatchingTags($tags = [])
+    public function get_ids_matching_tags($tags = [])
     {
-        if (!$this->_extendedBackend) {
-            Zend_Cache::throwException(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
+        if (!$this->_extended_backend) {
+            Zend_Cache::throw_exception(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
         }
-        if (!($this->_backendCapabilities['tags'])) {
-            Zend_Cache::throwException(self::BACKEND_NOT_SUPPORTS_TAG);
+        if (!$this->_backend_capabilities['tags']) {
+            Zend_Cache::throw_exception(self::BACKEND_NOT_SUPPORTS_TAG);
         }
-
-        $ids = $this->_backend->getIdsMatchingTags($tags);
-
+        $ids = $this->_backend->get_ids_matching_tags($tags);
         // we need to remove cache_id_prefix from ids (see #ZF-6178, #ZF-7600)
         if (isset($this->_options['cache_id_prefix']) && $this->_options['cache_id_prefix'] !== '') {
-            $prefix    = & $this->_options['cache_id_prefix'];
-            $prefixLen = strlen($prefix);
+            $prefix =& $this->_options['cache_id_prefix'];
+            $prefix_len = strlen($prefix);
             foreach ($ids as &$id) {
                 if (strpos($id, $prefix) === 0) {
-                    $id = substr($id, $prefixLen);
+                    $id = substr($id, $prefix_len);
                 }
             }
         }
-
         return $ids;
     }
-
     /**
      * Return an array of stored cache ids which don't match given tags
      *
@@ -502,31 +447,27 @@ class Zend_Cache_Core
      * @param array $tags array of tags
      * @return array array of not matching cache ids (string)
      */
-    public function getIdsNotMatchingTags($tags = [])
+    public function get_ids_not_matching_tags($tags = [])
     {
-        if (!$this->_extendedBackend) {
-            Zend_Cache::throwException(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
+        if (!$this->_extended_backend) {
+            Zend_Cache::throw_exception(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
         }
-        if (!($this->_backendCapabilities['tags'])) {
-            Zend_Cache::throwException(self::BACKEND_NOT_SUPPORTS_TAG);
+        if (!$this->_backend_capabilities['tags']) {
+            Zend_Cache::throw_exception(self::BACKEND_NOT_SUPPORTS_TAG);
         }
-
-        $ids = $this->_backend->getIdsNotMatchingTags($tags);
-
+        $ids = $this->_backend->get_ids_not_matching_tags($tags);
         // we need to remove cache_id_prefix from ids (see #ZF-6178, #ZF-7600)
         if (isset($this->_options['cache_id_prefix']) && $this->_options['cache_id_prefix'] !== '') {
-            $prefix    = & $this->_options['cache_id_prefix'];
-            $prefixLen = strlen($prefix);
+            $prefix =& $this->_options['cache_id_prefix'];
+            $prefix_len = strlen($prefix);
             foreach ($ids as &$id) {
                 if (strpos($id, $prefix) === 0) {
-                    $id = substr($id, $prefixLen);
+                    $id = substr($id, $prefix_len);
                 }
             }
         }
-
         return $ids;
     }
-
     /**
      * Return an array of stored cache ids which match any given tags
      *
@@ -535,87 +476,77 @@ class Zend_Cache_Core
      * @param array $tags array of tags
      * @return array array of matching any cache ids (string)
      */
-    public function getIdsMatchingAnyTags($tags = [])
+    public function get_ids_matching_any_tags($tags = [])
     {
-        if (!$this->_extendedBackend) {
-            Zend_Cache::throwException(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
+        if (!$this->_extended_backend) {
+            Zend_Cache::throw_exception(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
         }
-        if (!($this->_backendCapabilities['tags'])) {
-            Zend_Cache::throwException(self::BACKEND_NOT_SUPPORTS_TAG);
+        if (!$this->_backend_capabilities['tags']) {
+            Zend_Cache::throw_exception(self::BACKEND_NOT_SUPPORTS_TAG);
         }
-
-        $ids = $this->_backend->getIdsMatchingAnyTags($tags);
-
+        $ids = $this->_backend->get_ids_matching_any_tags($tags);
         // we need to remove cache_id_prefix from ids (see #ZF-6178, #ZF-7600)
         if (isset($this->_options['cache_id_prefix']) && $this->_options['cache_id_prefix'] !== '') {
-            $prefix    = & $this->_options['cache_id_prefix'];
-            $prefixLen = strlen($prefix);
+            $prefix =& $this->_options['cache_id_prefix'];
+            $prefix_len = strlen($prefix);
             foreach ($ids as &$id) {
                 if (strpos($id, $prefix) === 0) {
-                    $id = substr($id, $prefixLen);
+                    $id = substr($id, $prefix_len);
                 }
             }
         }
-
         return $ids;
     }
-
     /**
      * Return an array of stored cache ids
      *
      * @return array array of stored cache ids (string)
      */
-    public function getIds()
+    public function get_ids()
     {
-        if (!$this->_extendedBackend) {
-            Zend_Cache::throwException(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
+        if (!$this->_extended_backend) {
+            Zend_Cache::throw_exception(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
         }
-
-        $ids = $this->_backend->getIds();
-
+        $ids = $this->_backend->get_ids();
         // we need to remove cache_id_prefix from ids (see #ZF-6178, #ZF-7600)
         if (isset($this->_options['cache_id_prefix']) && $this->_options['cache_id_prefix'] !== '') {
-            $prefix    = & $this->_options['cache_id_prefix'];
-            $prefixLen = strlen($prefix);
+            $prefix =& $this->_options['cache_id_prefix'];
+            $prefix_len = strlen($prefix);
             foreach ($ids as &$id) {
                 if (strpos($id, $prefix) === 0) {
-                    $id = substr($id, $prefixLen);
+                    $id = substr($id, $prefix_len);
                 }
             }
         }
-
         return $ids;
     }
-
     /**
      * Return an array of stored tags
      *
      * @return array array of stored tags (string)
      */
-    public function getTags()
+    public function get_tags()
     {
-        if (!$this->_extendedBackend) {
-            Zend_Cache::throwException(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
+        if (!$this->_extended_backend) {
+            Zend_Cache::throw_exception(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
         }
-        if (!($this->_backendCapabilities['tags'])) {
-            Zend_Cache::throwException(self::BACKEND_NOT_SUPPORTS_TAG);
+        if (!$this->_backend_capabilities['tags']) {
+            Zend_Cache::throw_exception(self::BACKEND_NOT_SUPPORTS_TAG);
         }
-        return $this->_backend->getTags();
+        return $this->_backend->get_tags();
     }
-
     /**
      * Return the filling percentage of the backend storage
      *
      * @return int integer between 0 and 100
      */
-    public function getFillingPercentage()
+    public function get_filling_percentage()
     {
-        if (!$this->_extendedBackend) {
-            Zend_Cache::throwException(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
+        if (!$this->_extended_backend) {
+            Zend_Cache::throw_exception(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
         }
-        return $this->_backend->getFillingPercentage();
+        return $this->_backend->get_filling_percentage();
     }
-
     /**
      * Return an array of metadatas for the given cache id
      *
@@ -627,15 +558,15 @@ class Zend_Cache_Core
      * @param string $id cache id
      * @return array array of metadatas (false if the cache id is not found)
      */
-    public function getMetadatas($id)
+    public function get_metadatas($id)
     {
-        if (!$this->_extendedBackend) {
-            Zend_Cache::throwException(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
+        if (!$this->_extended_backend) {
+            Zend_Cache::throw_exception(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
         }
-        $id = $this->_id($id); // cache id may need prefix
-        return $this->_backend->getMetadatas($id);
+        $id = $this->_id($id);
+        // cache id may need prefix
+        return $this->_backend->get_metadatas($id);
     }
-
     /**
      * Give (if possible) an extra lifetime to the given cache id
      *
@@ -643,17 +574,16 @@ class Zend_Cache_Core
      * @param int $extraLifetime
      * @return boolean true if ok
      */
-    public function touch($id, $extraLifetime)
+    public function touch($id, $extra_lifetime)
     {
-        if (!$this->_extendedBackend) {
-            Zend_Cache::throwException(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
+        if (!$this->_extended_backend) {
+            Zend_Cache::throw_exception(self::BACKEND_NOT_IMPLEMENTS_EXTENDED_IF);
         }
-        $id = $this->_id($id); // cache id may need prefix
-
+        $id = $this->_id($id);
+        // cache id may need prefix
         $this->_log("Zend_Cache_Core: touch item '{$id}'", 7);
-        return $this->_backend->touch($id, $extraLifetime);
+        return $this->_backend->touch($id, $extra_lifetime);
     }
-
     /**
      * Validate a cache id or a tag (security, reliable filenames, reserved prefixes...)
      *
@@ -663,19 +593,18 @@ class Zend_Cache_Core
      * @throws Zend_Cache_Exception
      * @return void
      */
-    protected function _validateIdOrTag($string)
+    protected function _validate_id_or_tag($string)
     {
         if (!is_string($string)) {
-            Zend_Cache::throwException('Invalid id or tag : must be a string');
+            Zend_Cache::throw_exception('Invalid id or tag : must be a string');
         }
         if (substr($string, 0, 9) == 'internal-') {
-            Zend_Cache::throwException('"internal-*" ids or tags are reserved');
+            Zend_Cache::throw_exception('"internal-*" ids or tags are reserved');
         }
         if (!preg_match('~^[a-zA-Z0-9_]+$~D', $string)) {
-            Zend_Cache::throwException("Invalid id or tag '$string' : must use only [a-zA-Z0-9_]");
+            Zend_Cache::throw_exception("Invalid id or tag '{$string}' : must use only [a-zA-Z0-9_]");
         }
     }
-
     /**
      * Validate a tags array (security, reliable filenames, reserved prefixes...)
      *
@@ -685,17 +614,16 @@ class Zend_Cache_Core
      * @throws Zend_Cache_Exception
      * @return void
      */
-    protected function _validateTagsArray($tags)
+    protected function _validate_tags_array($tags)
     {
         if (!is_array($tags)) {
-            Zend_Cache::throwException('Invalid tags array : must be an array');
+            Zend_Cache::throw_exception('Invalid tags array : must be an array');
         }
         foreach ($tags as $tag) {
-            $this->_validateIdOrTag($tag);
+            $this->_validate_id_or_tag($tag);
         }
         reset($tags);
     }
-
     /**
      * Make sure if we enable logging that the Zend_Log class
      * is available.
@@ -704,25 +632,22 @@ class Zend_Cache_Core
      * @throws Zend_Cache_Exception
      * @return void
      */
-    protected function _loggerSanity()
+    protected function _logger_sanity()
     {
         if (!isset($this->_options['logging']) || !$this->_options['logging']) {
             return;
         }
-
         if (isset($this->_options['logger']) && $this->_options['logger'] instanceof Zend_Log) {
             return;
         }
-
         // Create a default logger to the standard output stream
         #require_once 'Zend/Log.php';
         #require_once 'Zend/Log/Writer/Stream.php';
         #require_once 'Zend/Log/Filter/Priority.php';
         $logger = new Zend_Log(new Zend_Log_Writer_Stream('php://output'));
-        $logger->addFilter(new Zend_Log_Filter_Priority(Zend_Log::WARN, '<='));
+        $logger->add_filter(new Zend_Log_Filter_Priority(Zend_Log::WARN, '<='));
         $this->_options['logger'] = $logger;
     }
-
     /**
      * Log a message at the WARN (4) priority.
      *
@@ -736,12 +661,11 @@ class Zend_Cache_Core
             return;
         }
         if (!(isset($this->_options['logger']) || $this->_options['logger'] instanceof Zend_Log)) {
-            Zend_Cache::throwException('Logging is enabled but logger is not set');
+            Zend_Cache::throw_exception('Logging is enabled but logger is not set');
         }
         $logger = $this->_options['logger'];
         $logger->log($message, $priority);
     }
-
     /**
      * Make and return a cache id
      *
@@ -753,9 +677,10 @@ class Zend_Cache_Core
     protected function _id(string $id): string
     {
         if (isset($this->_options['cache_id_prefix'])) {
-            return $this->_options['cache_id_prefix'] . $id; // return with prefix
+            return $this->_options['cache_id_prefix'] . $id;
+            // return with prefix
         }
-        return $id; // no prefix, just return the $id passed
+        return $id;
+        // no prefix, just return the $id passed
     }
-
 }
