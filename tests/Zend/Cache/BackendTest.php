@@ -19,7 +19,11 @@ class Zend_Cache_BackendTest extends Zend_Cache_TestCase
 
         $this->expectException('Zend_Cache_Exception');
         $backend->setDirectives('no');
+    }
 
+    public function testGetOptionUnknownNameThrows()
+    {
+        $backend = new Zend_Cache_Backend_BlackHole();
         $this->expectException('Zend_Cache_Exception');
         $backend->getOption('missing');
     }
