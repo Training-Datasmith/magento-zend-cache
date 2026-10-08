@@ -186,8 +186,8 @@ class Zend_Cache_Frontend_Page extends Zend_Cache_Core
     protected function _setContentTypeMemorization($value)
     {
         $found = null;
-        foreach ($this->_specificOptions['memorize_headers'] as $key => $value) {
-            if (strtolower($value) == 'content-type') {
+        foreach ($this->_specificOptions['memorize_headers'] as $key => $header) {
+            if (strtolower($header) == 'content-type') {
                 $found = $key;
             }
         }

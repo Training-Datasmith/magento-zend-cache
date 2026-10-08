@@ -225,6 +225,12 @@ abstract class Zend_Cache
             $name = 'ZendServer_' . substr($name, strlen('ZendServer'));
         }
 
+        foreach (array_merge(self::$standardFrontends, self::$standardBackends) as $canonical) {
+            if (strcasecmp($name, $canonical) === 0) {
+                return $canonical;
+            }
+        }
+
         return $name;
     }
 
